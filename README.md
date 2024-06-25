@@ -4,24 +4,24 @@ Este documento descreve os comandos disponíveis para gerenciar migrações, con
 
 ### Gerar Migração
 ```bash
-php console.php generate:migration DESCRIPTIVE_NAME
+php console generate:migration DESCRIPTIVE_NAME
 ```
 Substitua DESCRIPTIVE_NAME por um nome descritivo para a migração.
 
 ### Executar as Migrações
 ```bash
-php console.php migrate
+php console migrate
 ```
 
 ### Reverter Migrações
 Para reverter a última migração, use:
 ```bash
-php console.php rollback
+php console rollback
 ```
 
 ### Reverter uma Migração Específica
 ```bash
-php console.php rollback --name:NAME_MIGRATION
+php console rollback --name:NAME_MIGRATION
 ```
 Substitua NAME_MIGRATION pelo nome do arquivo de migração que você deseja reverter.
 
@@ -29,6 +29,6 @@ Substitua NAME_MIGRATION pelo nome do arquivo de migração que você deseja rev
 Para reverter as últimas N migrações, use:
 
 ```bash
-php console.php rollback --order:N
+php console rollback --order:N
 ```
 Substitua N pelo número de migrações que você deseja reverter.
