@@ -1,0 +1,6 @@
+/vendor/
+public/uploads
+vendor
+.env
+.env.development
+error.log
