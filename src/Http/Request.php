@@ -30,6 +30,10 @@ class Request {
         }
     }
 
+    public static function queryParams() {
+        return $_GET;
+    }
+
     public static function files() {
         return $_FILES;
     }

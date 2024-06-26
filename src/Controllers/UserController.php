@@ -12,7 +12,20 @@ use Exception;
 
 class UserController {
     public function fetch(Request $request, Response $response) {
-        // Code to list resources
+        try {
+            $filters = $request::queryParams();
+
+            $users = UserDAO::fetchAll($filters);
+
+            return $response::json($users);
+
+        } catch (Exception $e) {
+            logError($e->getMessage());
+            return $response::json([
+                'error'   => true,
+                'message' => "Falha ao buscar os usuários."
+            ], 500);
+        }
     }
 
     public function show(Request $request, Response $response, $id) {
@@ -97,7 +110,7 @@ class UserController {
                 'success'   => true,
                 'message'   => "Usuário deletado com sucesso."
             ], 200);
-            
+
         } catch (Exception $e) {
             logError($e->getMessage());
             return $response::json([

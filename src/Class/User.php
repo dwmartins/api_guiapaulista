@@ -17,11 +17,11 @@ class User {
     public $createdAt;
     public $updatedAt;
 
-    public function __construct($user) {
+    public function __construct($user = null) {
         $this->id        = $user['id'] ?? '';
-        $this->name      = ucfirst($user['name']);
-        $this->lastName  = ucfirst($user['lastName']);
-        $this->email     = $user['email'];
+        $this->name      = isset($user['name']) ? ucfirst($user['name']) : '';
+        $this->lastName  = isset($user['lastName']) ? ucfirst($user['lastName']) : '';
+        $this->email     = $user['email'] ?? '';
         $this->password  = $user['password'] ?? '';
         $this->token     = $user['token'] ?? '';
         $this->active    = $user['active'] ?? 'N';

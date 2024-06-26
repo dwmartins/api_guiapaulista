@@ -10,6 +10,7 @@ use App\Models\UserDAO;
 
 class UserMiddleware {
     public static function adminLogged(Request $request, Response $response) {
+        $allowedRoles = ["admin", "super"];
         $headers = Request::authorization();
 
         $token  = $headers['token'] ?? '';
@@ -42,7 +43,7 @@ class UserMiddleware {
                 ], 401);
             }
 
-            if($user->getRole() != "admin") {
+            if(!in_array($user->getRole(), $allowedRoles)) {
                 return $response::json([
                     'error'             => true,
                     'invalidPermission' => "Você não tem permissão para executar essa ação."
@@ -60,6 +61,7 @@ class UserMiddleware {
     }
 
     public static function modLogged(Request $request, Response $response) {
+        $allowedRoles = ["admin", "super", "mod"];
         $headers = Request::authorization();
 
         $token  = $headers['token'] ?? '';
@@ -92,7 +94,7 @@ class UserMiddleware {
                 ], 401);
             }
 
-            if($user->getRole() != "mod" && $user->getRole() != "admin") {
+            if(!in_array($user->getRole(), $allowedRoles)) {
                 return $response::json([
                     'error'             => true,
                     'invalidPermission' => "Você não tem permissão para executar essa ação."

@@ -45,7 +45,7 @@ class UserDAO extends Database {
             return $pdo->lastInsertId();
         } catch (PDOException $e) {
             logError($e->getMessage());
-            throw new Exception("Falha ao criar o usuário");
+            throw new Exception("Error when executing query to create user");
         }
     }
 
@@ -88,7 +88,7 @@ class UserDAO extends Database {
 
         } catch (PDOException $e) {
             logError($e->getMessage());
-            throw new Exception("Falha ao Atualizar o usuário");
+            throw new Exception("Error when executing query to update user");
         }
     }
 
@@ -107,21 +107,51 @@ class UserDAO extends Database {
 
         } catch (PDOException $e) {
             logError($e->getMessage());
-            throw new Exception("Falha ao deletar o usuário");
+            throw new Exception("Error when running query to search for users");
         }
     }
 
-    public static function fetchAll($active) {
+    public static function fetchAll(array $filters) {
         try {
             $pdo = self::getConnection();
-            $parameters = [];
+            $classUser = new User();
+
+            $conditions[] = "role != ?";
+            $parameters[] = 'super';
+
+            $columns = [];
+            $ignoredColumns = ["token", "password"];
+
+            foreach ($classUser as $key => $value) {
+                if(!property_exists($classUser, $key)) {
+                    continue;
+                }
+
+                if(in_array($key, $ignoredColumns)) {
+                    continue;
+                }
+
+                $columns[] = $key;
+            }
+
+            $columns = implode(", ", $columns);
     
-            $sql =  "SELECT id, name, lastName, email, active, role, photo, createdAt, updatedAt 
-                        FROM users";
+            $sql =  "SELECT $columns FROM users";
     
-            if(!empty($active)) {
-                $sql .= " WHERE active = ?";
-                $parameters[] = $active;
+            if (!empty($filters['active'])) {
+                $conditions[] = "active = ?";
+                $parameters[] = $filters['active'];
+            }
+
+            if (!empty($filters['role'])) {
+                if ($filters['role'] !== 'super') {
+                    $conditions[] = "role = ?";
+                    $parameters[] = $filters['role'];
+                }
+            }
+
+            if (!empty($conditions)) {
+                $sql .= " WHERE " . implode(" AND ", $conditions);
             }
             
             $stmt = $pdo->prepare($sql);
@@ -131,7 +161,7 @@ class UserDAO extends Database {
     
         } catch (PDOException $e) {
             logError($e->getMessage());
-            throw new Exception("Falha ao buscar os usuários");
+            throw new Exception("Error when running query to search for users");
         }
     }
     
@@ -171,7 +201,7 @@ class UserDAO extends Database {
 
         } catch (PDOException $e) {
             logError($e->getMessage());
-            throw new Exception("Falha ao buscar o usuário por id.");
+            throw new Exception("Error when executing query to search for user by id");
         }
     }
 }
