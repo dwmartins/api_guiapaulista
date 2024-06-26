@@ -5,35 +5,39 @@ namespace App\Http;
 class Route {
     private static array $routes = [];
 
-    public static function get(string $path, string $action) {
+    public static function get(string $path, string $action, array $middlewares = []) {
         self::$routes[] = [
-            'path'   => $path,
-            'action' => $action,
-            'method' => 'GET'
+            'path'       => $path,
+            'action'     => $action,
+            'method'     => 'GET',
+            'middlewares'=> $middlewares
         ];
     }
 
-    public static function post(string $path, string $action) {
+    public static function post(string $path, string $action, array $middlewares = []) {
         self::$routes[] = [
-            'path'   => $path,
-            'action' => $action,
-            'method' => 'POST'
+            'path'       => $path,
+            'action'     => $action,
+            'method'     => 'POST',
+            'middlewares'=> $middlewares
         ];
     }
 
-    public static function put(string $path, string $action) {
+    public static function put(string $path, string $action, array $middlewares = []) {
         self::$routes[] = [
-            'path'   => $path,
-            'action' => $action,
-            'method' => 'PUT'
+            'path'       => $path,
+            'action'     => $action,
+            'method'     => 'PUT',
+            'middlewares'=> $middlewares
         ];
     }
 
-    public static function delete(string $path, string $action) {
+    public static function delete(string $path, string $action, array $middlewares = []) {
         self::$routes[] = [
-            'path'   => $path,
-            'action' => $action,
-            'method' => 'DELETE'
+            'path'       => $path,
+            'action'     => $action,
+            'method'     => 'DELETE',
+            'middlewares'=> $middlewares
         ];
     }
 

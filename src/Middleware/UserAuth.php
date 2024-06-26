@@ -108,4 +108,30 @@ class UserAuth {
             ], 401);
         }
     }
+
+    public static function teste(Request $request, Response $response) {
+        $autenticado = true;
+
+        if(!$autenticado) {
+            return $response::json([
+                'error'             => true,
+                'invalidPermission' => "Você não tem permissão para executar essa ação."
+            ], 403);
+        }
+
+        return true;
+    }
+
+    public static function teste2(Request $request, Response $response) {
+        $autenticado = false;
+
+        if(!$autenticado) {
+            return $response::json([
+                'error'             => true,
+                'invalidPermission' => "Você não tem permissão para executar essa ação."
+            ], 403);
+        }
+
+        return true;
+    }
 }
