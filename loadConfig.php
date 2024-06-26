@@ -9,7 +9,7 @@ function isCli() {
     return php_sapi_name() === 'cli' || defined('STDIN');
 }
 
-if($_SERVER['REQUEST_URI'] === '/favicon.ico') {
+if(isset($_SERVER['REQUEST_URI']) && $_SERVER['REQUEST_URI'] === '/favicon.ico') {
     exit;
 }
 

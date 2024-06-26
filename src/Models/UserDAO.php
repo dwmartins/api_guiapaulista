@@ -14,19 +14,15 @@ class UserDAO extends Database {
     public static function save(User $user) {
         try {
             $pdo = self::getConnection();
+            $user->createdAt = date('Y-m-d H:i:s');
+            $user->updatedAt = date('Y-m-d H:i:s');
 
             $columns = [];
             $placeholders = [];
             $values = [];
 
-            $ignoredColumns = ["createdAt", "updatedAt"];
-
             foreach ($user as $key => $value) {
                 if(!property_exists($user, $key)) {
-                    continue;
-                }
-
-                if (in_array($key, $ignoredColumns)) {
                     continue;
                 }
 
@@ -152,7 +148,7 @@ class UserDAO extends Database {
 
         } catch (PDOException $e) {
             logError($e->getMessage());
-            throw new Exception("Falha ao buscar o usuário por e-mail.");
+            throw new Exception($e->getMessage());
         }
     }
 

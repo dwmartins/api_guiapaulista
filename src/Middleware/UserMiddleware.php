@@ -8,8 +8,8 @@ use App\Http\Request;
 use App\Http\Response;
 use App\Models\UserDAO;
 
-class UserAuth {
-    public static function validUserAdminLogged(Request $request, Response $response) {
+class UserMiddleware {
+    public static function adminLogged(Request $request, Response $response) {
         $headers = Request::authorization();
 
         $token  = $headers['token'] ?? '';
@@ -18,7 +18,7 @@ class UserAuth {
         if(!$token) {
             return $response::json([
                 'error'        => true,
-                'invalidToken' => "Realize o login para acessar esta área."
+                'invalidToken' => "Realize o login novamente para continuar."
             ], 401);
         }
 
@@ -31,7 +31,7 @@ class UserAuth {
             if(!$decoded) {
                 return $response::json([
                     'error'        => true,
-                    'invalidToken' => "Realize o login para acessar esta área."
+                    'invalidToken' => "Realize o login novamente para continuar."
                 ], 401);
             }
 
@@ -54,12 +54,12 @@ class UserAuth {
         } else {
             return $response::json([
                 'error'        => true,
-                'invalidToken' => "Realize o login para acessar esta área."
+                'invalidToken' => "Realize o login novamente para continuar."
             ], 401);
         }
     }
 
-    public static function validUserModLogged(Request $request, Response $response) {
+    public static function modLogged(Request $request, Response $response) {
         $headers = Request::authorization();
 
         $token  = $headers['token'] ?? '';
@@ -68,7 +68,7 @@ class UserAuth {
         if(!$token) {
             return $response::json([
                 'error'        => true,
-                'invalidToken' => "Realize o login para acessar esta área."
+                'invalidToken' => "Realize o login novamente para continuar."
             ], 401);
         }
 
@@ -81,7 +81,7 @@ class UserAuth {
             if(!$decoded) {
                 return $response::json([
                     'error'        => true,
-                    'invalidToken' => "Realize o login para acessar esta área."
+                    'invalidToken' => "Realize o login novamente para continuar."
                 ], 401);
             }
 
@@ -104,34 +104,8 @@ class UserAuth {
         } else {
             return $response::json([
                 'error'        => true,
-                'invalidToken' => "Realize o login para acessar esta área."
+                'invalidToken' => "Realize o login novamente para continuar."
             ], 401);
         }
-    }
-
-    public static function teste(Request $request, Response $response) {
-        $autenticado = true;
-
-        if(!$autenticado) {
-            return $response::json([
-                'error'             => true,
-                'invalidPermission' => "Você não tem permissão para executar essa ação."
-            ], 403);
-        }
-
-        return true;
-    }
-
-    public static function teste2(Request $request, Response $response) {
-        $autenticado = false;
-
-        if(!$autenticado) {
-            return $response::json([
-                'error'             => true,
-                'invalidPermission' => "Você não tem permissão para executar essa ação."
-            ], 403);
-        }
-
-        return true;
     }
 }

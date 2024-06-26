@@ -35,16 +35,25 @@ class Request {
     }
 
     public static function authorization() {
-        $authorization = getallheaders();
-        $bearer = explode(" ", $authorization['Authorization']);
-        $token = $bearer[1];
-
-        if(!isset($authorization['userId']) || empty($token)) {
+        $headers = getallheaders();
+    
+        if (!isset($headers['Authorization'])) {
             return false;
         }
-        
+    
+        $bearer = explode(" ", $headers['Authorization']);
+        if (count($bearer) !== 2 || $bearer[0] !== 'Bearer') {
+            return false;
+        }
+    
+        $token = $bearer[1];
+    
+        if (!isset($headers['userId']) || empty($token)) {
+            return false;
+        }
+    
         return [
-            "userId" => $authorization['userId'],
+            "userId" => $headers['userId'],
             "token"  => $token
         ];
     }

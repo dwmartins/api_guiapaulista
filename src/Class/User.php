@@ -2,6 +2,8 @@
 
 namespace App\Class;
 
+use App\Models\UserDAO;
+
 class User {
     public $id;
     public $name;
@@ -107,5 +109,9 @@ class User {
 
     public function getUpdatedAt() {
         return $this->updatedAt;
+    }
+
+    public function save() {
+        return UserDAO::save($this);
     }
 }
