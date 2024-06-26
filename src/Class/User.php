@@ -19,13 +19,13 @@ class User {
 
     public function __construct($user) {
         $this->id        = $user['id'] ?? '';
-        $this->name      = $user['name'];
-        $this->lastName  = $user['lastName'];
+        $this->name      = ucfirst($user['name']);
+        $this->lastName  = ucfirst($user['lastName']);
         $this->email     = $user['email'];
         $this->password  = $user['password'] ?? '';
         $this->token     = $user['token'] ?? '';
-        $this->active    = $user['active'] ?? '';
-        $this->role      = $user['role'] ?? '';
+        $this->active    = $user['active'] ?? 'N';
+        $this->role      = $user['role'] ?? 'mod';
         $this->photo     = $user['photo'] ?? '';
         $this->createdAt = $user['createdAt'] ?? '';
         $this->updatedAt = $user['updatedAt'] ?? '';
@@ -44,7 +44,7 @@ class User {
     }
 
     public function setName($name) {
-        $this->name = $name;
+        $this->name = ucfirst($name);
     }
 
     public function getLastName() {
@@ -52,7 +52,7 @@ class User {
     }
 
     public function setLastName($lastName) {
-        $this->lastName = $lastName;
+        $this->lastName = ucfirst($lastName);
     }
 
     public function getEmail() {
@@ -107,11 +107,23 @@ class User {
         return $this->createdAt;
     }
 
+    public function setCreatedAt($createdAt) {
+        $this->createdAt = $createdAt;
+    }
+
     public function getUpdatedAt() {
         return $this->updatedAt;
     }
 
+    public function setUpdatedAt($updatedAt) {
+        $this->updatedAt = $updatedAt;
+    }
+
     public function save() {
         return UserDAO::save($this);
+    }
+
+    public function update() {
+        UserDAO::update($this);
     }
 }

@@ -9,34 +9,98 @@ use Exception;
 class UserValidators {
     public static function create(array $data) {
         try {
-            Validator::validate([
-                'nome'        => $data['name'] ?? '',
-                'sobre nome'  => $data['lastName'] ?? '',
-                'e-mail'      => $data['email'] ?? '',
-                'senha'       => $data['password'] ?? ''
-            ]);
+            $fields = [
+                'Nome'        => $data['name'] ?? '',
+                'Sobre nome'  => $data['lastName'] ?? '',
+                'E-mail'      => $data['email'] ?? '',
+                'Senha'       => $data['password'] ?? ''
+            ];
+
+            Validator::validate($fields);
+            
+            foreach ($fields as $key => $value) {
+                if($key === "E-mail") {
+                    if(!TextValidator::email($value)) {
+                        Response::json([
+                            'error'     => true,
+                            'message'   => "O e-mail é invalido"
+                        ], 400);
+
+                        return false;
+                    }
+
+                    continue;
+                }
+
+                if($key === "Senha") {
+                    continue;
+                }
+
+                if(!TextValidator::simpleText($value)) {
+                    Response::json([
+                        'error'     => true,
+                        'message'   => "O campo ($key) contem caracteres inválidos."
+                    ], 400);
+
+                    return false;
+                }
+            }
+
+            return true;
         }
         catch (Exception $e) {
             Response::json([
                 'error'     => true,
                 'message'   => $e->getMessage()
             ], 400);
+
+            return false;
         }
     }
 
     public static function update(array $data) {
         try {
-            Validator::validate([
-                'nome'        => $data['name'] ?? '',
-                'sobre nome'  => $data['lastName'] ?? '',
-                'e-mail'      => $data['email'] ?? '',
-            ]);
+            $fields = [
+                'Nome'        => $data['name'] ?? '',
+                'Sobre nome'  => $data['lastName'] ?? '',
+                'E-mail'      => $data['email'] ?? '',
+            ];
+
+            Validator::validate($fields);
+
+            foreach ($fields as $key => $value) {
+                if($key === "E-mail") {
+                    if(!TextValidator::email($value)) {
+                        Response::json([
+                            'error'     => true,
+                            'message'   => "O e-mail é invalido"
+                        ], 400);
+
+                        return false;
+                    }
+
+                    continue;
+                }
+
+                if(!TextValidator::simpleText($value)) {
+                    Response::json([
+                        'error'     => true,
+                        'message'   => "O campo ($key) contem caracteres inválidos."
+                    ], 400);
+
+                    return false;
+                }
+            }
+
+            return true;
         }
         catch (Exception $e) {
             Response::json([
                 'error'     => true,
                 'message'   => $e->getMessage()
             ], 400);
+
+            return false;
         }
     }
 }

@@ -14,8 +14,9 @@ class UserDAO extends Database {
     public static function save(User $user) {
         try {
             $pdo = self::getConnection();
-            $user->createdAt = date('Y-m-d H:i:s');
-            $user->updatedAt = date('Y-m-d H:i:s');
+
+            $user->setCreatedAt(date('Y-m-d H:i:s'));
+            $user->setUpdatedAt(date('Y-m-d H:i:s'));
 
             $columns = [];
             $placeholders = [];
@@ -52,10 +53,12 @@ class UserDAO extends Database {
         try {
             $pdo = self::getConnection();
 
+            $user->setUpdatedAt(date('Y-m-d H:i:s'));
+
             $columns = [];
             $values = [];
 
-            $ignoredColumns = ["id", "photo", "password", "token", "createdAt", "updatedAt"];
+            $ignoredColumns = ["id", "photo", "password", "token", "createdAt"];
 
             foreach ($user as $key => $value) {
                 if(!property_exists($user, $key)) {

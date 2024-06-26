@@ -23,7 +23,9 @@ class UserController {
         try {
             $body = $request::body();
 
-            UserValidators::create($body);
+            if(!UserValidators::create($body)) {
+                return;
+            }
 
             if(UserDAO::fetchByEmail($body['email']) != false) {
                 return $response::json([
@@ -43,6 +45,7 @@ class UserController {
             ], 201);
 
         } catch (Exception $e) {
+            logError($e->getMessage());
             return $response::json([
                 'error'   => true,
                 'message' => "Falha ao criar o usuário."
@@ -51,7 +54,37 @@ class UserController {
     }
 
     public function update(Request $request, Response $response) {
-        // Code to update a specific resource
+        try {
+            $body = $request::body();
+
+            if(!UserValidators::update($body)) {
+                return;
+            }
+
+            $emailExists = UserDAO::fetchByEmail($body['email']);
+
+            if($emailExists != false && $emailExists['id'] != $body['id']) {
+                return $response::json([
+                    'error'     => true,
+                    'message'   => "Este e-mail já está em uso."
+                ], 409);
+            }
+
+            $user = new User($body);
+            $user->update();
+
+            return $response::json([
+                'success'   => true,
+                'message'   => "Usuário atualizado com sucesso."
+            ], 201);
+
+        } catch (Exception $e) {
+            logError($e->getMessage());
+            return $response::json([
+                'error'   => true,
+                'message' => "Falha ao atualizar o usuário."
+            ], 500);
+        }
     }
 
     public function delete(Request $request, Response $response, $id) {
