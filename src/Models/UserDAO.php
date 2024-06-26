@@ -92,7 +92,7 @@ class UserDAO extends Database {
         }
     }
 
-    public static function delete($id) {
+    public static function delete(User $user) {
         try {
             $pdo = self::getConnection();
 
@@ -101,7 +101,7 @@ class UserDAO extends Database {
                 WHERE id = ?"
             );
 
-            $stmt->execute([$id]);
+            $stmt->execute([$user->getId()]);
 
             return $stmt->rowCount();
 
@@ -162,8 +162,7 @@ class UserDAO extends Database {
             $stmt = $pdo->prepare(
                 "SELECT *
                 FROM users
-                WHERE active = 'Y' 
-                AND id = ?"
+                WHERE id = ?"
             );
 
             $stmt->execute([$id]);

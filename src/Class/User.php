@@ -126,4 +126,8 @@ class User {
     public function update() {
         UserDAO::update($this);
     }
+
+    public function delete() {
+        UserDAO::delete($this);
+    }
 }

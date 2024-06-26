@@ -88,6 +88,22 @@ class UserController {
     }
 
     public function delete(Request $request, Response $response, $id) {
-        // Code to delete a specific resource
+        try {
+            $user = UserDAO::fetchById($id[0]);
+            $user = new User($user);
+            $user->delete();
+
+            return $response::json([
+                'success'   => true,
+                'message'   => "Usuário deletado com sucesso."
+            ], 200);
+            
+        } catch (Exception $e) {
+            logError($e->getMessage());
+            return $response::json([
+                'error'   => true,
+                'message' => "Falha ao deletar o usuário."
+            ], 500);
+        }
     }
 }
