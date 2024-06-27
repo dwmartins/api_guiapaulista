@@ -50,6 +50,7 @@ class UserMiddleware {
                 ], 403);
             }
 
+            $request::setAttribute('userRequest', $user);
             return true;
 
         } else {
@@ -101,6 +102,7 @@ class UserMiddleware {
                 ], 403);
             }
 
+            $request::setAttribute('userRequest', $user);
             return true;
 
         } else {

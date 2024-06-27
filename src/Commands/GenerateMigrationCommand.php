@@ -31,7 +31,6 @@ class Migration_{$timestamp}_{$description} extends Database{
             \$stmt = \$this->db->prepare(\$sql);
             \$stmt->execute();
         } catch (PDOException \$e) {
-            showAlertLog("ERROR: ". \$e->getMessage());
             throw \$e;
         }
     }

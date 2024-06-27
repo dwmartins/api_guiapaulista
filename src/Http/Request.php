@@ -3,6 +3,9 @@
 namespace App\Http;
 
 class Request {
+
+    private static array $attributes = [];
+
     public static function method() {
         return $_SERVER["REQUEST_METHOD"];
     }
@@ -64,5 +67,13 @@ class Request {
 
     public static function getIp() {
         return isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
+    }
+
+    public static function setAttribute($key, $value) {
+        self::$attributes[$key] = $value;
+    }
+
+    public static function getAttribute($key) {
+        return self::$attributes[$key] ?? null;
     }
 }

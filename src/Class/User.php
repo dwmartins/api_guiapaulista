@@ -14,6 +14,7 @@ class User {
     private string $active;
     private string $role;
     private string $photo;
+    private int $createdBy;
     private string $createdAt;
     private string $updatedAt;
 
@@ -27,6 +28,7 @@ class User {
         $this->active    = $user['active'] ?? 'N';
         $this->role      = $user['role'] ?? 'mod';
         $this->photo     = $user['photo'] ?? '';
+        $this->createdBy = $user['createdBy'] ?? 0;
         $this->createdAt = $user['createdAt'] ?? '';
         $this->updatedAt = $user['updatedAt'] ?? '';
     }
@@ -42,6 +44,7 @@ class User {
             'active'    => $this->active,
             'role'      => $this->role,
             'photo'     => $this->photo,
+            'createdBy' => $this->createdBy,
             'createdAt' => $this->createdAt,
             'updatedAt' => $this->updatedAt,
         ];
@@ -117,6 +120,14 @@ class User {
 
     public function setPhoto(string $photo): void {
         $this->photo = $photo;
+    }
+
+    public function getCreatedBy(): int {
+        return $this->createdBy;
+    }
+
+    public function setCreatedBy(int $createdBy): void {
+        $this->createdBy = $createdBy;
     }
 
     public function getCreatedAt(): string {

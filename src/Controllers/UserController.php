@@ -35,6 +35,7 @@ class UserController {
     public function create(Request $request, Response $response) {
         try {
             $body = $request::body();
+            $userRequest = $request::getAttribute('userRequest');
 
             if(!UserValidators::create($body)) {
                 return;
@@ -50,6 +51,7 @@ class UserController {
             $user = new User($body);
             $user->setPassword(password_hash($user->getPassword(), PASSWORD_DEFAULT));
             $user->setToken(JWTManager::newCrypto());
+            $user->setCreatedBy($userRequest->getId());
             $user->save();
 
             $response::json([

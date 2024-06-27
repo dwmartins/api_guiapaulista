@@ -22,13 +22,12 @@ class Migration_20240627182634_user_access extends Database{
                 user_id INT NOT NULL,
                 ip VARCHAR(100),
                 createdAt DATETIME,
-                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+                CONSTRAINT fk_userAccessId FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
             );";
 
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
         } catch (PDOException $e) {
-            showAlertLog("ERROR: ". $e->getMessage());
             throw $e;
         }
     }

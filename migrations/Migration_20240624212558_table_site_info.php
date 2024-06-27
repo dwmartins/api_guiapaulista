@@ -17,7 +17,7 @@ class Migration_20240624212558_table_site_info extends Database{
     public function up() {
         // Migration implementation (up)
         try {
-            $sql = "CREATE TABLE IF NOT EXISTS siteInfo (
+            $sql = "CREATE TABLE IF NOT EXISTS site_Info (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 webSiteName VARCHAR(250),
                 email VARCHAR(100),

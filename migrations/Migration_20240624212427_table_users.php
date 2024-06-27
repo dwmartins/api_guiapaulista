@@ -18,6 +18,7 @@ class Migration_20240624212427_table_users extends Database{
     public function up() {
         // Migration implementation (up)
         try {
+            //Cria a tabela de usuários
             $sql = "CREATE TABLE IF NOT EXISTS users (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 name VARCHAR(50) NOT NULL,
@@ -28,6 +29,7 @@ class Migration_20240624212427_table_users extends Database{
                 active ENUM('Y', 'N'),
                 role VARCHAR(50) NOT NULL,
                 photo VARCHAR(255),
+                createdBy INT,
                 createdAt DATETIME,
                 updatedAt DATETIME);
             ";
@@ -35,13 +37,23 @@ class Migration_20240624212427_table_users extends Database{
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
 
+            // Adiciona a Foreign Key em createdBy
+            $sql = "ALTER TABLE users
+                    ADD CONSTRAINT fk_created_by 
+                    FOREIGN KEY (createdBy) 
+                    REFERENCES users(id);";
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+
+            //Cria um usuário super
             $sql = $sql = "INSERT INTO users (name, email, password, token, active, role, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
             $stmt = $this->db->prepare($sql);
 
             $values = [
                 "Administrador",
                 $_ENV['DEVEMAIL'],
-                password_hash("aguip707", PASSWORD_DEFAULT),
+                password_hash("aguip2707", PASSWORD_DEFAULT),
                 JWTManager::newCrypto(),
                 "Y",
                 "super",
@@ -52,7 +64,6 @@ class Migration_20240624212427_table_users extends Database{
             $stmt->execute($values);
 
         } catch (PDOException $e) {
-            showAlertLog("ERROR: ". $e->getMessage());
             throw $e;
         }
     }

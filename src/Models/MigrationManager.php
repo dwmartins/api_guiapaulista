@@ -13,6 +13,7 @@ class MigrationManager extends Database{
             $this->db = self::getConnection();
         } catch (PDOException $e) {
             showAlertLog("ERROR: ". $e->getMessage());
+            logError($e->getMessage());
             throw $e;
         }
     }
@@ -43,6 +44,7 @@ class MigrationManager extends Database{
             showSuccessLog("Migrations have been executed successfully.");
         } catch (PDOException $e) {
             showAlertLog("ERROR: ". $e->getMessage());
+            logError($e->getMessage());
         }
     }
 
@@ -101,6 +103,7 @@ class MigrationManager extends Database{
             showSuccessLog("Rollback executed successfully");
         } catch (PDOException $e) {
             showAlertLog("ERROR: ". $e->getMessage());
+            logError($e->getMessage());
         }
     }
 
@@ -115,27 +118,43 @@ class MigrationManager extends Database{
     }
 
     protected function getAppliedMigrations() {
-        $stmt = $this->db->prepare("SELECT migration FROM migrations");
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+        try {
+            $stmt = $this->db->prepare("SELECT migration FROM migrations");
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_COLUMN);
+        } catch (PDOException $e) {
+            throw $e;
+        }
     }
 
     protected function getMigration($migrationFile) {
-        $stmt = $this->db->prepare("SELECT migration FROM migrations WHERE migration = :migration");
-        $stmt->bindValue(':migration', $migrationFile);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+        try {
+            $stmt = $this->db->prepare("SELECT migration FROM migrations WHERE migration = :migration");
+            $stmt->bindValue(':migration', $migrationFile);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_COLUMN);
+        } catch (PDOException $e) {
+            throw $e;
+        }
     }
 
     protected function markMigrationApplied($migrationFile) {
-        $stmt = $this->db->prepare("INSERT INTO migrations (migration) VALUES (:migration)");
-        $stmt->bindValue(':migration', $migrationFile);
-        $stmt->execute();
+        try {
+            $stmt = $this->db->prepare("INSERT INTO migrations (migration) VALUES (:migration)");
+            $stmt->bindValue(':migration', $migrationFile);
+            $stmt->execute();
+        } catch (PDOException $e) {
+            throw $e;
+        }
     }
 
     protected function removeMigrationRecord($migrationFile) {
-        $stmt = $this->db->prepare("DELETE FROM migrations WHERE migration = :migration");
-        $stmt->bindValue(':migration', $migrationFile);
-        $stmt->execute();
+        try {
+            $stmt = $this->db->prepare("DELETE FROM migrations WHERE migration = :migration");
+            $stmt->bindValue(':migration', $migrationFile);
+            $stmt->execute();
+        } catch (PDOException $e) {
+            throw $e;
+        }
     }
 }
