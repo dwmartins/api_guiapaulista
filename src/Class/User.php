@@ -5,20 +5,20 @@ namespace App\Class;
 use App\Models\UserDAO;
 
 class User {
-    public $id;
-    public $name;
-    public $lastName;
-    public $email;
-    public $password;
-    public $token;
-    public $active;
-    public $role;
-    public $photo;
-    public $createdAt;
-    public $updatedAt;
+    private int $id;
+    private string $name;
+    private string $lastName;
+    private string $email;
+    private string $password;
+    private string $token;
+    private string $active;
+    private string $role;
+    private string $photo;
+    private string $createdAt;
+    private string $updatedAt;
 
     public function __construct($user = null) {
-        $this->id        = $user['id'] ?? '';
+        $this->id        = $user['id'] ?? 0;
         $this->name      = isset($user['name']) ? ucfirst($user['name']) : '';
         $this->lastName  = isset($user['lastName']) ? ucfirst($user['lastName']) : '';
         $this->email     = $user['email'] ?? '';
@@ -31,103 +31,119 @@ class User {
         $this->updatedAt = $user['updatedAt'] ?? '';
     }
 
-    public function getId() {
+    public function toArray(): array {
+        return [
+            'id'        => $this->id,
+            'name'      => $this->name,
+            'lastName'  => $this->lastName,
+            'email'     => $this->email,
+            'password'  => $this->password,
+            'token'     => $this->token,
+            'active'    => $this->active,
+            'role'      => $this->role,
+            'photo'     => $this->photo,
+            'createdAt' => $this->createdAt,
+            'updatedAt' => $this->updatedAt,
+        ];
+    }
+
+    public function getId(): int {
         return $this->id;
     }
 
-    public function setId($id) {
+    public function setId(int $id): void {
         $this->id = $id;
     }
 
-    public function getName() {
+    public function getName(): string {
         return $this->name;
     }
 
-    public function setName($name) {
+    public function setName(string $name): void {
         $this->name = ucfirst($name);
     }
 
-    public function getLastName() {
+    public function getLastName(): string {
         return $this->lastName;
     }
 
-    public function setLastName($lastName) {
+    public function setLastName(string $lastName): void {
         $this->lastName = ucfirst($lastName);
     }
 
-    public function getEmail() {
+    public function getEmail(): string {
         return $this->email;
     }
 
-    public function setEmail($email) {
+    public function setEmail(string $email): void {
         $this->email = $email;
     }
 
-    public function getPassword() {
+    public function getPassword(): string {
         return $this->password;
     }
 
-    public function setPassword($password) {
+    public function setPassword(string $password): void {
         $this->password = $password;
     }
 
-    public function getToken() {
+    public function getToken(): string {
         return $this->token;
     }
 
-    public function setToken($token) {
-        return $this->token = $token;
+    public function setToken(string $token): void {
+        $this->token = $token;
     }
 
-    public function getActive() {
+    public function getActive(): string {
         return $this->active;
     }
 
-    public function setActive($active) {
+    public function setActive(string $active): void {
         $this->active = $active;
     }
 
-    public function getRole() {
+    public function getRole(): string {
         return $this->role;
     }
 
-    public function setRole($role) {
+    public function setRole(string $role): void {
         $this->role = $role;
     }
 
-    public function getPhoto() {
+    public function getPhoto(): string {
         return $this->photo;
     }
 
-    public function setPhoto($photo) {
+    public function setPhoto(string $photo): void {
         $this->photo = $photo;
     }
 
-    public function getCreatedAt() {
+    public function getCreatedAt(): string {
         return $this->createdAt;
     }
 
-    public function setCreatedAt($createdAt) {
+    public function setCreatedAt(string $createdAt): void {
         $this->createdAt = $createdAt;
     }
 
-    public function getUpdatedAt() {
+    public function getUpdatedAt(): string {
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt($updatedAt) {
+    public function setUpdatedAt($updatedAt): void {
         $this->updatedAt = $updatedAt;
     }
 
-    public function save() {
+    public function save(): int {
         return UserDAO::save($this);
     }
 
-    public function update() {
-        UserDAO::update($this);
+    public function update(): int {
+        return UserDAO::update($this);
     }
 
-    public function delete() {
-        UserDAO::delete($this);
+    public function delete(): int {
+        return UserDAO::delete($this);
     }
 }

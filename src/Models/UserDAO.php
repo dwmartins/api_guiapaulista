@@ -11,22 +11,20 @@ use PDOException;
 
 class UserDAO extends Database {
 
-    public static function save(User $user) {
+    public static function save(User $user): int {
         try {
             $pdo = self::getConnection();
 
             $user->setCreatedAt(date('Y-m-d H:i:s'));
             $user->setUpdatedAt(date('Y-m-d H:i:s'));
 
+            $userArray = $user->toArray();
+
             $columns = [];
             $placeholders = [];
             $values = [];
 
-            foreach ($user as $key => $value) {
-                if(!property_exists($user, $key)) {
-                    continue;
-                }
-
+            foreach ($userArray as $key => $value) {
                 $columns[] = $key;
                 $placeholders[] = "?";
                 $values[] = $value;
@@ -49,22 +47,19 @@ class UserDAO extends Database {
         }
     }
 
-    public static function update(User $user) {
+    public static function update(User $user): int {
         try {
             $pdo = self::getConnection();
 
             $user->setUpdatedAt(date('Y-m-d H:i:s'));
+            $userArray = $user->toArray();
 
             $columns = [];
             $values = [];
 
             $ignoredColumns = ["id", "photo", "password", "token", "createdAt"];
 
-            foreach ($user as $key => $value) {
-                if(!property_exists($user, $key)) {
-                    continue;
-                }
-
+            foreach ($userArray as $key => $value) {
                 if (in_array($key, $ignoredColumns)) {
                     continue;
                 }
@@ -92,7 +87,7 @@ class UserDAO extends Database {
         }
     }
 
-    public static function delete(User $user) {
+    public static function delete(User $user): int {
         try {
             $pdo = self::getConnection();
 
@@ -111,10 +106,11 @@ class UserDAO extends Database {
         }
     }
 
-    public static function fetchAll(array $filters) {
+    public static function fetchAll(array $filters): array {
         try {
             $pdo = self::getConnection();
-            $classUser = new User();
+            $user = new User();
+            $userArray = $user->toArray();
 
             $conditions[] = "role != ?";
             $parameters[] = 'super';
@@ -122,11 +118,7 @@ class UserDAO extends Database {
             $columns = [];
             $ignoredColumns = ["token", "password"];
 
-            foreach ($classUser as $key => $value) {
-                if(!property_exists($classUser, $key)) {
-                    continue;
-                }
-
+            foreach ($userArray as $key => $value) {
                 if(in_array($key, $ignoredColumns)) {
                     continue;
                 }
@@ -157,7 +149,9 @@ class UserDAO extends Database {
             $stmt = $pdo->prepare($sql);
     
             $stmt->execute($parameters);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result ?: [];
     
         } catch (PDOException $e) {
             logError($e->getMessage());
@@ -165,7 +159,7 @@ class UserDAO extends Database {
         }
     }
     
-    public static function fetchByEmail($email) {
+    public static function fetchByEmail(string $email): array {
         try {
             $pdo = self::getConnection();
 
@@ -177,7 +171,9 @@ class UserDAO extends Database {
 
             $stmt->execute([$email]);
 
-            return $stmt->fetch(PDO::FETCH_ASSOC);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            return $result ?: [];
 
         } catch (PDOException $e) {
             logError($e->getMessage());
@@ -185,7 +181,7 @@ class UserDAO extends Database {
         }
     }
 
-    public static function fetchById($id) {
+    public static function fetchById(int $id): array {
         try {
             $pdo = self::getConnection();
 
@@ -197,7 +193,9 @@ class UserDAO extends Database {
 
             $stmt->execute([$id]);
 
-            return $stmt->fetch(PDO::FETCH_ASSOC);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            return $result ?: [];
 
         } catch (PDOException $e) {
             logError($e->getMessage());
