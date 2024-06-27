@@ -103,4 +103,33 @@ class UserValidators {
             return false;
         }
     }
+
+    public static function login(array $data) {
+        try {
+            $fields = [
+                "E-mail" => $data['email'] ?? '',
+                "Senha"  => $data['password'] ?? ''
+            ];
+
+            Validator::validate($fields);
+
+            if(!TextValidator::email($data['email'])) {
+                Response::json([
+                    'error'     => true,
+                    'message'   => "O e-mail é invalido"
+                ], 400);
+
+                return false;
+            }
+
+            return true;
+        } catch (Exception $e) {
+            Response::json([
+                'error'     => true,
+                'message'   => $e->getMessage()
+            ], 400);
+
+            return false;
+        }
+    }
 }

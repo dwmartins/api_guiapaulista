@@ -26,7 +26,7 @@ class UserMiddleware {
         $user = UserDAO::fetchById($userId);
         $user = new User($user);
 
-        if(!empty($user)) {
+        if(!empty($user) && $user->getActive() === "Y") {
             $decoded = JWTManager::validate($token, $user);
 
             if(!$decoded) {
@@ -77,7 +77,7 @@ class UserMiddleware {
         $user = UserDAO::fetchById($userId);
         $user = new User($user);
 
-        if(!empty($user)) {
+        if(!empty($user) && $user->getActive() === "Y") {
             $decoded = JWTManager::validate($token, $user);
 
             if(!$decoded) {

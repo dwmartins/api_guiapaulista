@@ -61,4 +61,8 @@ class Request {
             "token"  => $token
         ];
     }
+
+    public static function getIp() {
+        return isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
+    }
 }
