@@ -18,7 +18,7 @@ class User {
     private string $createdAt;
     private string $updatedAt;
 
-    public function __construct($user = null) {
+    public function __construct(array $user = null) {
         $this->id        = $user['id'] ?? 0;
         $this->name      = isset($user['name']) ? ucfirst($user['name']) : '';
         $this->lastName  = isset($user['lastName']) ? ucfirst($user['lastName']) : '';
@@ -146,8 +146,9 @@ class User {
         $this->updatedAt = $updatedAt;
     }
 
-    public function save(): int {
-        return UserDAO::save($this);
+    public function save(): void {
+        $userId = UserDAO::save($this);
+        $this->setId($userId);
     }
 
     public function update(): int {

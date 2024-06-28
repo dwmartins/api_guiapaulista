@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Class\User;
+use App\Class\UserPermissions;
 use App\Http\JWTManager;
 use App\Http\Request;
 use App\Http\Response;
@@ -54,6 +55,8 @@ class UserController {
             $user->setCreatedBy($userRequest->getId());
             $user->save();
 
+            $this->setPermissions($user);
+
             $response::json([
                 'success' => true,
                 'message' => "Usuário criado com sucesso."
@@ -66,6 +69,41 @@ class UserController {
                 'message' => "Falha ao criar o usuário."
             ], 500);
         }
+    }
+
+    public function setPermissions(User $user) {
+        // Permissões para ações de usuários;  
+        $toUsers = [
+            'create' => true,
+            'update' => false,
+            'delete' => false
+        ];
+
+        // Permissões para acessar páginas; 
+        $toPages = ['listUsers', 'siteInfo'];
+
+        // Permissões para ações de produtos;
+        $toProducts = [
+            'create' => true,
+            'update' => false,
+            'delete' => false
+        ];
+
+        // Permissões para configurações de e-mail;
+        $toConfigsEmail = [
+            'update' => false
+        ];
+
+        $userPermissions = [
+            "user_id" => $user->getId(),
+            "toUsers" => $toUsers,
+            "toPages" => $toPages,
+            "toProducts" => $toProducts,
+            "toConfigsEmail" => $toConfigsEmail
+        ];
+
+        $permissions = new UserPermissions($userPermissions);
+        $permissions->save();
     }
 
     public function update(Request $request, Response $response) {
