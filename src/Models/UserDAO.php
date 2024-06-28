@@ -112,7 +112,7 @@ class UserDAO extends Database {
             $user = new User();
             $userArray = $user->toArray();
 
-            $conditions[] = "role != ?";
+            $conditions[] = "u.role != ?";
             $parameters[] = 'super';
 
             $columns = [];
@@ -123,21 +123,22 @@ class UserDAO extends Database {
                     continue;
                 }
 
-                $columns[] = $key;
+                $columns[] = "u." . $key;
             }
 
+            $columns[] = "creator.name AS createdByName";
             $columns = implode(", ", $columns);
     
-            $sql =  "SELECT $columns FROM users";
+            $sql =  "SELECT $columns FROM users u LEFT JOIN users creator ON u.createdBy = creator.id";
     
             if (!empty($filters['active'])) {
-                $conditions[] = "active = ?";
+                $conditions[] = "u.active = ?";
                 $parameters[] = $filters['active'];
             }
 
             if (!empty($filters['role'])) {
                 if ($filters['role'] !== 'super') {
-                    $conditions[] = "role = ?";
+                    $conditions[] = "u.role = ?";
                     $parameters[] = $filters['role'];
                 }
             }
@@ -164,9 +165,10 @@ class UserDAO extends Database {
             $pdo = self::getConnection();
 
             $stmt = $pdo->prepare(
-                "SELECT *
-                FROM users
-                WHERE email = ?"
+                " SELECT u.*, creator.name AS createdByName
+                FROM users u
+                LEFT JOIN users creator ON u.createdBy = creator.id
+                WHERE u.email = ?"
             );
 
             $stmt->execute([$email]);
@@ -186,9 +188,10 @@ class UserDAO extends Database {
             $pdo = self::getConnection();
 
             $stmt = $pdo->prepare(
-                "SELECT *
-                FROM users
-                WHERE id = ?"
+                " SELECT u.*, creator.name AS createdByName
+                FROM users u
+                LEFT JOIN users creator ON u.createdBy = creator.id
+                WHERE u.id = ?"
             );
 
             $stmt->execute([$id]);
