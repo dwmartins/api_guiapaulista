@@ -17,24 +17,6 @@ class Migration_20240627213622_user_permissions extends Database{
     public function up() {
         // Migration implementation (up)
         try {
-            $toUsers = [
-                'create' => false,
-                'update' => false,
-                'delete' => false
-            ];
-
-            $toPages = ['listUsers', 'siteInfo'];
-
-            $toProducts = [
-                'create' => false,
-                'update' => false,
-                'delete' => false
-            ];
-
-            $toConfigsEmail = [
-                'update' => false
-            ];
-
             $sql = "CREATE TABLE IF NOT EXISTS user_permissions (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 user_id INT NOT NULL,

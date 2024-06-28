@@ -188,10 +188,12 @@ class UserDAO extends Database {
             $pdo = self::getConnection();
 
             $stmt = $pdo->prepare(
-                " SELECT u.*, creator.name AS createdByName
-                FROM users u
-                LEFT JOIN users creator ON u.createdBy = creator.id
-                WHERE u.id = ?"
+                "SELECT u.*, creator.name AS createdByName, 
+                    up.toUsers, up.toPages, up.toProducts, up.toConfigsEmail
+                    FROM users u
+                    LEFT JOIN users creator ON u.createdBy = creator.id
+                    LEFT JOIN user_permissions up ON u.id = up.user_id
+                    WHERE u.id = ?"
             );
 
             $stmt->execute([$id]);
