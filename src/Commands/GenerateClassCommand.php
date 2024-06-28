@@ -58,30 +58,19 @@ use App\Models\Database;
 use PDOException;
 
 class {$className} extends Database{
-    protected \$db;
-
-    public function __construct(Database \$db) {
-        try {
-            \$this->db = self::getConnection();
-        } catch (PDOException \$e) {
-            showAlertLog("ERROR: ". \$e->getMessage());
-            throw \$e;
-        }
-    }
-
-    public function save(\$data) {
+    public static function save(\$data) {
         // Implementation of the creation method
     }
 
-    public function fetch(\$id) {
+    public static function fetch(\$id) {
         // Implementation of the read method
     }
 
-    public function update(\$data) {
+    public static function update(\$data) {
         // Update method implementation
     }
 
-    public function delete(\$id) {
+    public static function delete(\$id) {
         // Implementation of the delete method
     }
 }
