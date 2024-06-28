@@ -11,6 +11,7 @@ class GenerateClassCommand {
     private static function generateClass($name) {
         $className = ucfirst($name);
         $filename = "{$className}.php";
+        $modelName = "{$className}DAO";
 
         $fileExists = __DIR__ . "/../Class/{$filename}";
 
@@ -24,7 +25,7 @@ class GenerateClassCommand {
 
 namespace App\Classes;
 
-use App\Models\
+use App\Models\\$modelName;
 
 class {$className} {
     // getters and setters methods
@@ -54,6 +55,7 @@ EOT;
 namespace App\Models;
 
 use App\Models\Database;
+use PDOException;
 
 class {$className} extends Database{
     protected \$db;
