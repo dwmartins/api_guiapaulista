@@ -10,15 +10,6 @@ use Exception;
 class UserPermissionsDAO extends Database{
     protected $db;
 
-    public function __construct(Database $db){
-        try {
-            $this->db = self::getConnection();
-        } catch (PDOException $e) {
-            showAlertLog("ERROR: ". $e->getMessage());
-            throw $e;
-        }
-    }
-
     public static function save(UserPermissions $permission): int {
         try {
             $pdo = self::getConnection();

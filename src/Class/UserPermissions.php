@@ -7,32 +7,29 @@ use App\Models\UserPermissionsDAO;
 class UserPermissions {
     private int $id;
     private int $user_id;
-    private string $toUsers;
-    private string $toPages;
-    private string $toProducts;
-    private string $toConfigsEmail;
+    private string $users;
+    private string $content;
+    private string $settings;
     private string $createdAt;
     private string $updatedAt;
 
     public function __construct(array $permission = null) {
-        $this->id             = $permission['id'] ?? 0;
-        $this->user_id        = $permission['user_id'] ?? 0;
-        $this->toUsers        = json_encode($permission['toUsers']);
-        $this->toPages        = json_encode($permission['toPages']);
-        $this->toProducts     = json_encode($permission['toProducts']);
-        $this->toConfigsEmail = json_encode($permission['toConfigsEmail']);
-        $this->createdAt      = $permission['createdAt'] ?? '';
-        $this->updatedAt      = $permission['updatedAt'] ?? '';
+        $this->id           = $permission['id'] ?? 0;
+        $this->user_id      = $permission['user_id'] ?? 0;
+        $this->users        = json_encode($permission['users']);
+        $this->content      = json_encode($permission['content']);
+        $this->settings     = json_encode($permission['settings']);
+        $this->createdAt    = $permission['createdAt'] ?? '';
+        $this->updatedAt    = $permission['updatedAt'] ?? '';
     }
 
     public function toArray(): array {
         return [
             'id'             => $this->id,
             'user_id'        => $this->user_id,
-            'toUsers'        => $this->toUsers,
-            'toPages'        => $this->toPages,
-            'toProducts'     => $this->toProducts,
-            'toConfigsEmail' => $this->toConfigsEmail,
+            'users'          => $this->users,
+            'content'        => $this->content,
+            'settings'       => $this->settings,
             'createdAt'      => $this->createdAt,
             'updatedAt'      => $this->updatedAt
         ];
@@ -50,36 +47,28 @@ class UserPermissions {
         $this->user_id = $user_id;
     }
 
-    public function getToUsers(): string {
-        return json_decode($this->toUsers);
+    public function getUsers(): string {
+        return json_decode($this->users);
     }
 
-    public function setToUsers(string $toUsers): void {
-        $this->toUsers = json_encode($toUsers);
+    public function setUsers(string $users): void {
+        $this->users = json_encode($users);
     }
 
-    public function getToPages(): string {
-        return json_decode($this->toPages);
+    public function getContent(): string {
+        return json_decode($this->content);
     }
 
-    public function setToPages(string $toPages): void {
-        $this->toPages = json_encode($toPages);
+    public function setContent(string $content): void {
+        $this->content = json_encode($content);
     }
 
-    public function getToProducts(): string {
-        return json_decode($this->toProducts);
+    public function getSettings(): string {
+        return json_decode($this->settings);
     }
 
-    public function setToProducts(string $toProducts): void {
-        $this->toProducts = json_encode($toProducts);
-    }
-
-    public function getToConfigsEmail(): string {
-        return json_decode($this->toConfigsEmail);
-    }
-
-    public function setToConfigsEmail(string $toConfigsEmail): void {
-        $this->toConfigsEmail = json_encode($toConfigsEmail);
+    public function setSettings(string $settings): void {
+        $this->settings = json_encode($settings);
     }
 
     public function getCreatedAt(): string {

@@ -20,10 +20,9 @@ class Migration_20240627213622_user_permissions extends Database{
             $sql = "CREATE TABLE IF NOT EXISTS user_permissions (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 user_id INT NOT NULL,
-                toUsers JSON,
-                toPages JSON,
-                toProducts JSON,
-                toConfigsEmail JSON,
+                users JSON,
+                content JSON,
+                settings JSON,
                 createdAt DATETIME,
                 updatedAt DATETIME,
                 CONSTRAINT fk_userPer_permissions FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
