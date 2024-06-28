@@ -7,7 +7,7 @@ use App\Http\Response;
 
 class HomeController {
     public function index(Request $request, Response $response) {
-        return $response::json([
+        return $response->json([
             'message'    => "Bem vindo a API"
         ]);
     }

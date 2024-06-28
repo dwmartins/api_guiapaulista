@@ -13,7 +13,7 @@ use Exception;
 class UserController {
     public function fetch(Request $request, Response $response) {
         try {
-            $filters = $request::queryParams();
+            $filters = $request->queryParams();
 
             $users = UserDAO::fetchAll($filters);
 
@@ -34,8 +34,8 @@ class UserController {
 
     public function create(Request $request, Response $response) {
         try {
-            $body = $request::body();
-            $userRequest = $request::getAttribute('userRequest');
+            $body = $request->body();
+            $userRequest = $request->getAttribute('userRequest');
 
             if(!UserValidators::create($body)) {
                 return;
@@ -70,7 +70,7 @@ class UserController {
 
     public function update(Request $request, Response $response) {
         try {
-            $body = $request::body();
+            $body = $request->body();
 
             if(!UserValidators::update($body)) {
                 return;

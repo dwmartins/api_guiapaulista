@@ -14,7 +14,7 @@ use Exception;
 class AuthController {
     public function login(Request $request, Response $response) {
         try {
-            $data = $request::body();
+            $data = $request->body();
 
             if(!UserValidators::login($data)) {
                 return;

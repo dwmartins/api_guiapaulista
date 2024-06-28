@@ -11,7 +11,7 @@ use App\Models\UserDAO;
 class UserMiddleware {
     public static function adminLogged(Request $request, Response $response) {
         $allowedRoles = ["admin", "super"];
-        $headers = Request::authorization();
+        $headers = $request->authorization();
 
         $token  = $headers['token'] ?? '';
         $userId = $headers['userId'] ?? '';
@@ -50,7 +50,7 @@ class UserMiddleware {
                 ], 403);
             }
 
-            $request::setAttribute('userRequest', $user);
+            $request->setAttribute('userRequest', $user);
             return true;
 
         } else {
@@ -63,7 +63,7 @@ class UserMiddleware {
 
     public static function modLogged(Request $request, Response $response) {
         $allowedRoles = ["admin", "super", "mod"];
-        $headers = Request::authorization();
+        $headers = $request->authorization();
 
         $token  = $headers['token'] ?? '';
         $userId = $headers['userId'] ?? '';
@@ -102,7 +102,7 @@ class UserMiddleware {
                 ], 403);
             }
 
-            $request::setAttribute('userRequest', $user);
+            $request->setAttribute('userRequest', $user);
             return true;
 
         } else {
