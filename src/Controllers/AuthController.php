@@ -45,19 +45,19 @@ class AuthController {
                         ]);
                         $userAccess->save();
 
-                        return $response::json($userData, 200);
+                        return $response->json($userData, 200);
                     }
                 }
             }
 
-            return $response::json([
+            return $response->json([
                 'error'   => true,
                 'message'    => "Usuário ou senha inválidos."
             ], 401); 
             
         } catch (Exception $e) {
             logError($e->getMessage());
-            return $response::json([
+            return $response->json([
                 'error'   => true,
                 'message' => "Falha ao realizar o login"
             ], 500);

@@ -18,11 +18,11 @@ class UserController {
 
             $users = UserDAO::fetchAll($filters);
 
-            return $response::json($users);
+            return $response->json($users);
 
         } catch (Exception $e) {
             logError($e->getMessage());
-            return $response::json([
+            return $response->json([
                 'error'   => true,
                 'message' => "Falha ao buscar os usuários."
             ], 500);
@@ -43,7 +43,7 @@ class UserController {
             }
 
             if(UserDAO::fetchByEmail($body['email']) != false) {
-                return $response::json([
+                return $response->json([
                     'error'     => true,
                     'message'   => "Este e-mail já está em uso."
                 ], 409);
@@ -57,14 +57,14 @@ class UserController {
 
             $this->setPermissions($user);
 
-            $response::json([
+            $response->json([
                 'success' => true,
                 'message' => "Usuário criado com sucesso."
             ], 201);
 
         } catch (Exception $e) {
             logError($e->getMessage());
-            return $response::json([
+            return $response->json([
                 'error'   => true,
                 'message' => "Falha ao criar o usuário."
             ], 500);
@@ -113,7 +113,7 @@ class UserController {
             $emailExists = UserDAO::fetchByEmail($body['email']);
 
             if($emailExists != false && $emailExists['id'] != $body['id']) {
-                return $response::json([
+                return $response->json([
                     'error'     => true,
                     'message'   => "Este e-mail já está em uso."
                 ], 409);
@@ -122,14 +122,14 @@ class UserController {
             $user = new User($body);
             $user->update();
 
-            return $response::json([
+            return $response->json([
                 'success'   => true,
                 'message'   => "Usuário atualizado com sucesso."
             ], 201);
 
         } catch (Exception $e) {
             logError($e->getMessage());
-            return $response::json([
+            return $response->json([
                 'error'   => true,
                 'message' => "Falha ao atualizar o usuário."
             ], 500);
@@ -142,14 +142,14 @@ class UserController {
             $user = new User($user);
             $user->delete();
 
-            return $response::json([
+            return $response->json([
                 'success'   => true,
                 'message'   => "Usuário deletado com sucesso."
             ], 200);
 
         } catch (Exception $e) {
             logError($e->getMessage());
-            return $response::json([
+            return $response->json([
                 'error'   => true,
                 'message' => "Falha ao deletar o usuário."
             ], 500);
