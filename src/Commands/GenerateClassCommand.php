@@ -23,7 +23,7 @@ class GenerateClassCommand {
         $template = <<<EOT
 <?php
 
-namespace App\Classes;
+namespace App\Class;
 
 use App\Models\\$modelName;
 
