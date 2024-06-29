@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Class\User;
 use App\Class\UserPermissions;
 use App\Models\Database;
+use PDO;
 use PDOException;
 use Exception;
 
@@ -43,6 +45,24 @@ class UserPermissionsDAO extends Database{
         } catch (PDOException $e) {
             logError($e->getMessage());
             throw new Exception("Error when executing query to save user permissions");
+        }
+    }
+
+    public static function getPermissions(User $user): array {
+        try {
+            $pdo = self::getConnection();
+
+            $stmt = $pdo->prepare(
+                "SELECT * FROM user_permissions WHERE user_id = ?"
+            );
+
+            $stmt->execute([$user->getId()]);
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result ?: [];
+        } catch (PDOException $e) {
+            logError($e->getMessage());
+            throw new Exception("Error when executing query to search for user permissions");
         }
     }
 }

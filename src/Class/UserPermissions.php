@@ -16,9 +16,9 @@ class UserPermissions {
     public function __construct(array $permission = null) {
         $this->id           = $permission['id'] ?? 0;
         $this->user_id      = $permission['user_id'] ?? 0;
-        $this->users        = json_encode($permission['users']);
-        $this->content      = json_encode($permission['content']);
-        $this->settings     = json_encode($permission['settings']);
+        $this->users        = !is_string($permission['users']) ? json_encode($permission['users']) : $permission['users'];
+        $this->content      = !is_string($permission['content']) ? json_encode($permission['content']) : $permission['content'];
+        $this->settings     = !is_string($permission['settings']) ? json_encode($permission['settings']) : $permission['settings'];
         $this->createdAt    = $permission['createdAt'] ?? '';
         $this->updatedAt    = $permission['updatedAt'] ?? '';
     }
@@ -47,7 +47,7 @@ class UserPermissions {
         $this->user_id = $user_id;
     }
 
-    public function getUsers(): string {
+    public function getUsers(): object {
         return json_decode($this->users);
     }
 
@@ -55,7 +55,7 @@ class UserPermissions {
         $this->users = json_encode($users);
     }
 
-    public function getContent(): string {
+    public function getContent(): object {
         return json_decode($this->content);
     }
 
@@ -63,7 +63,7 @@ class UserPermissions {
         $this->content = json_encode($content);
     }
 
-    public function getSettings(): string {
+    public function getSettings(): object {
         return json_decode($this->settings);
     }
 
