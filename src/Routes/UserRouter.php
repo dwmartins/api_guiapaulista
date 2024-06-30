@@ -4,17 +4,18 @@ use App\Http\Route;
 use App\Middleware\UserMiddleware;
 
 Route::get('/user', 'UserController@fetch', [
-    [UserMiddleware::class, 'adminLogged']
+    [UserMiddleware::class, 'isAuth']
 ]);
 
 Route::post('/user', 'UserController@create', [
-    [UserMiddleware::class, 'adminLogged']
+    [UserMiddleware::class, 'isAuth'],
+    [UserMiddleware::class, 'permissionsToUsers', 'create']
 ]);
 
 Route::put('/user', 'UserController@update', [
-    [UserMiddleware::class, 'modLogged']
+    [UserMiddleware::class, 'isAuth']
 ]);
 
 Route::delete('/user/{id}', 'UserController@delete', [
-    [UserMiddleware::class, 'modLogged']
+    [UserMiddleware::class, 'isAuth']
 ]);

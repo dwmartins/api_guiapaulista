@@ -53,11 +53,11 @@ class UserPermissionsDAO extends Database{
             $pdo = self::getConnection();
 
             $stmt = $pdo->prepare(
-                "SELECT * FROM user_permissions WHERE user_id = ?"
+                "SELECT * FROM user_permissions WHERE user_id = ? LIMIT 1"
             );
 
             $stmt->execute([$user->getId()]);
-            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
             return $result ?: [];
         } catch (PDOException $e) {

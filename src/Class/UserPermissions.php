@@ -9,7 +9,8 @@ class UserPermissions {
     private int $user_id;
     private string $users;
     private string $content;
-    private string $settings;
+    private string $siteInfo;
+    private string $emailSending;
     private string $createdAt;
     private string $updatedAt;
 
@@ -18,7 +19,8 @@ class UserPermissions {
         $this->user_id      = $permission['user_id'] ?? 0;
         $this->users        = !is_string($permission['users']) ? json_encode($permission['users']) : $permission['users'];
         $this->content      = !is_string($permission['content']) ? json_encode($permission['content']) : $permission['content'];
-        $this->settings     = !is_string($permission['settings']) ? json_encode($permission['settings']) : $permission['settings'];
+        $this->siteInfo     = !is_string($permission['siteInfo']) ? json_encode($permission['siteInfo']) : $permission['siteInfo'];
+        $this->emailSending = !is_string($permission['emailSending']) ? json_encode($permission['emailSending']) : $permission['emailSending'];
         $this->createdAt    = $permission['createdAt'] ?? '';
         $this->updatedAt    = $permission['updatedAt'] ?? '';
     }
@@ -29,7 +31,8 @@ class UserPermissions {
             'user_id'        => $this->user_id,
             'users'          => $this->users,
             'content'        => $this->content,
-            'settings'       => $this->settings,
+            'siteInfo'       => $this->siteInfo,
+            'emailSending'   => $this->emailSending,
             'createdAt'      => $this->createdAt,
             'updatedAt'      => $this->updatedAt
         ];
@@ -47,28 +50,36 @@ class UserPermissions {
         $this->user_id = $user_id;
     }
 
-    public function getUsers(): object {
-        return json_decode($this->users);
+    public function getUsers(): array {
+        return json_decode($this->users, true);
     }
 
     public function setUsers(string $users): void {
         $this->users = json_encode($users);
     }
 
-    public function getContent(): object {
-        return json_decode($this->content);
+    public function getContent(): array {
+        return json_decode($this->content, true);
     }
 
     public function setContent(string $content): void {
         $this->content = json_encode($content);
     }
 
-    public function getSettings(): object {
-        return json_decode($this->settings);
+    public function getSiteInfo(): array {
+        return json_decode($this->siteInfo, true);
     }
 
-    public function setSettings(string $settings): void {
-        $this->settings = json_encode($settings);
+    public function setSiteInfo(string $siteInfo): void {
+        $this->siteInfo = json_encode($siteInfo);
+    }
+
+    public function getEmailSending(): array {
+        return json_decode($this->emailSending, true);
+    }
+
+    public function setEmailSending(string $emailSending): void {
+        $this->emailSending = json_encode($emailSending);
     }
 
     public function getCreatedAt(): string {

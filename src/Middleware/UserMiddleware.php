@@ -3,13 +3,15 @@
 namespace App\Middleware;
 
 use App\Class\User;
+use App\Class\UserPermissions;
 use App\Http\JWTManager;
 use App\Http\Request;
 use App\Http\Response;
 use App\Models\UserDAO;
+use App\Models\UserPermissionsDAO;
 
 class UserMiddleware {
-    public static function adminLogged(Request $request, Response $response) {
+    public static function isAuth(Request $request, Response $response) {
         $allowedRoles = ["admin", "super"];
         $headers = $request->authorization();
 
@@ -46,7 +48,8 @@ class UserMiddleware {
             if(!in_array($user->getRole(), $allowedRoles)) {
                 return $response::json([
                     'error'             => true,
-                    'invalidPermission' => "Você não tem permissão para executar essa ação."
+                    'invalidPermission' => "Você não tem permissão para executar essa ação.",
+                    'redirect'          => true
                 ], 403);
             }
 
@@ -61,55 +64,33 @@ class UserMiddleware {
         }
     }
 
-    public static function modLogged(Request $request, Response $response) {
-        $allowedRoles = ["admin", "super", "mod"];
-        $headers = $request->authorization();
+    public function permissionsToUsers(Request $request, Response $response, $param) {
+        $user = $request->getAttribute('userRequest');
 
-        $token  = $headers['token'] ?? '';
-        $userId = $headers['userId'] ?? '';
-
-        if(!$token) {
-            return $response::json([
-                'error'        => true,
-                'invalidToken' => "Realize o login novamente para continuar."
-            ], 401);
+        if($user->getRole() === 'super') {
+            return true;
         }
 
-        $user = UserDAO::fetchById($userId);
-        $user = new User($user);
+        $user = UserPermissionsDAO::getPermissions($user);
 
-        if(!empty($user) && $user->getActive() === "Y") {
-            $decoded = JWTManager::validate($token, $user);
+        if(!empty($user)) {
+            $user = new UserPermissions($user);
+            $toUser = $user->getUsers();
 
-            if(!$decoded) {
-                return $response::json([
-                    'error'        => true,
-                    'invalidToken' => "Realize o login novamente para continuar."
-                ], 401);
+            if($toUser['permission']) {
+                return true;
             }
 
-            if(isset($decoded->expired)) {
-                return $response::json([
-                    'error'        => true,
-                    'expiredToken' => "Sua sessão expirou, realize o login novamente."
-                ], 401);
-            }
-
-            if(!in_array($user->getRole(), $allowedRoles)) {
-                return $response::json([
-                    'error'             => true,
-                    'invalidPermission' => "Você não tem permissão para executar essa ação."
-                ], 403);
-            }
-
-            $request->setAttribute('userRequest', $user);
-            return true;
-
+            return $response::json([
+                'error'             => true,
+                'invalidPermission' => "Você não tem permissão para executar essa ação."
+            ], 403);
+            
         } else {
             return $response::json([
-                'error'        => true,
-                'invalidToken' => "Realize o login novamente para continuar."
-            ], 401);
+                'error'             => true,
+                'invalidPermission' => "Você não tem permissão para executar essa ação."
+            ], 403);
         }
     }
 }

@@ -67,10 +67,12 @@ class Core {
 
     private static function applyMiddlewares(array $middlewares, Request $request, Response $response): bool {
         foreach ($middlewares as $middleware) {
-            if (is_array($middleware) && count($middleware) === 2 && is_string($middleware[0]) && method_exists($middleware[0], $middleware[1])) {
+            if (is_array($middleware) && count($middleware) >= 2 && is_string($middleware[0]) && method_exists($middleware[0], $middleware[1])) {
                 $middlewareClass = new $middleware[0]();
                 $middlewareMethod = $middleware[1];
-                if (!$middlewareClass->$middlewareMethod($request, $response)) {
+                if (isset($middleware[2]) && !$middlewareClass->$middlewareMethod($request, $response, $middleware[2])) {
+                    return false;
+                } elseif (!isset($middleware[2]) && !$middlewareClass->$middlewareMethod($request, $response)) {
                     return false;
                 }
             } else {

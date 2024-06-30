@@ -74,28 +74,34 @@ class UserController {
     public function setPermissions(User $user) {
         // Permissões para ações de usuários;  
         $users = [
-            'create' => false,
-            'update' => false,
-            'delete' => false,
-            'list'   => false
+            'permission' => false,
+            'label' => 'Usuários'
+        ];
+
+        // Permissões para conteúdos do site;
+        $content = [
+            'permission' => false,
+            'label' => 'Conteúdos do site.'
         ];
 
         //Permissões para ações de configurações;
-        $settings = [
-            'siteInfo' => true,
-            'emailSending' => false,
+        $siteInfo = [
+            'permission' => true,
+            'label' => 'Informações do site'
         ];
 
-        $content = [
-            'portfolio' => true,
-            'selectedProjects' => false
+        //Permissões para configurações de e-mail;
+        $emailSending = [
+            'permission' => false,
+            'label' => 'Configurações de e-mail'
         ];
 
         $userPermissions = [
             "user_id" => $user->getId(),
             "users" => $users,
             "content" => $content,
-            "settings" => $settings
+            "siteInfo" => $siteInfo,
+            'emailSending' => $emailSending
         ];
 
         $permissions = new UserPermissions($userPermissions);
