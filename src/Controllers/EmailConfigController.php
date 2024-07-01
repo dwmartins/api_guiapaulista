@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Class\EmailConfig;
 use App\Http\Request;
 use App\Http\Response;
+use App\Models\EmailConfigDAO;
 use App\Validators\EmailConfigValidator;
 use Exception;
 
@@ -17,9 +18,15 @@ class EmailConfigController {
                 return false;
             }
 
+            $configExists = EmailConfigDAO::fetch();
             $emailConfig = new EmailConfig($data);
-            $emailConfig->save();
 
+            if(!empty($configExists)) {
+                $emailConfig->update();
+            } else {
+                $emailConfig->save();
+            }
+            
             $response->json([
                 'success' => true,
                 'message' => "Configurações salvas com sucesso."
@@ -50,9 +57,5 @@ class EmailConfigController {
                 'message' => "Falha ao buscar as configurações de e-mail."
             ], 500);
         }
-    }
-
-    public function update(Request $request, Response $response) {
-        // Code to update a specific resource
     }
 }

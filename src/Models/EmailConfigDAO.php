@@ -45,6 +45,46 @@ class EmailConfigDAO extends Database{
         }
     }
 
+    public static function update(EmailConfig $emailConfig): int {
+        try {
+            $pdo = self::getConnection();
+
+            $emailConfig->setUpdatedAt(date('Y-m-d H:i:s'));
+            $emailConfigArray = $emailConfig->toArray();
+
+            $columns = [];
+            $values = [];
+
+            $ignoredColumns = ["id", "createdAt"];
+
+            foreach ($emailConfigArray as $key => $value) {
+                if (in_array($key, $ignoredColumns)) {
+                    continue;
+                }
+
+                $columns[] = "$key = ?";
+                $values[] = $value;
+            }
+
+            $columns = implode(", ", $columns);
+            $values[] = $emailConfig->getId();
+
+            $stmt = $pdo->prepare(
+                "UPDATE email_config 
+                SET $columns
+                WHERE id = ?"
+            );
+
+            $stmt->execute($values);
+
+            return $stmt->rowCount();
+
+        } catch (PDOException $e) {
+            logError($e->getMessage());
+            throw new Exception("Error when executing query to update email settings.");
+        }
+    }
+
     public static function fetch(): array {
         try {
             $pdo = self::getConnection();

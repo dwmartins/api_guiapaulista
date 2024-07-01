@@ -20,11 +20,16 @@ class EmailConfig {
         $this->server         = $emailConfig['server'] ?? '';
         $this->emailAddress   = $emailConfig['emailAddress'] ?? '';
         $this->username       = $emailConfig['username'] ?? '';
-        $this->password       = $emailConfig['password'] ?? '';
         $this->port           = $emailConfig['port'] ?? 465;
         $this->authentication = $emailConfig['authentication'] ?? 'SSL';
         $this->createdAt      = $emailConfig['createdAt'] ?? '';
         $this->updatedAt      = $emailConfig['updatedAt'] ?? '';
+
+        if (isset($emailConfig['password'])) {
+            $this->setPassword($emailConfig['password']);
+        } else {
+            $this->password = '';
+        }
     }
 
     public function toArray(): array {
@@ -74,11 +79,17 @@ class EmailConfig {
     }
 
     public function getPassword(): string {
-        return $this->password;
+        $cipher = "aes-256-cbc";
+        list($encrypted_data, $iv) = explode('::', base64_decode($this->password), 2);
+        return openssl_decrypt($encrypted_data, $cipher, $_ENV['ENCRYPTION_KEY'], 0, $iv);
     }
 
     public function setPassword(string $password): void {
-        $this->password = $password;
+        $cipher = "aes-256-cbc";
+        $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length($cipher));
+        $encrypted = openssl_encrypt($password, $cipher, $_ENV['ENCRYPTION_KEY'], 0, $iv);
+
+        $this->password = base64_encode($encrypted . '::' . $iv);
     }
 
     public function getPort(): int {
@@ -127,5 +138,9 @@ class EmailConfig {
         }
 
         return $emailConfig;
+    }
+
+    public function update(): int {
+        return EmailConfigDAO::update($this);
     }
 }
