@@ -16,12 +16,13 @@ class EmailConfig {
     private string $updatedAt;
 
     public function __construct(array $emailConfig = null) {
+        $this->id             = $emailConfig['id'] ?? 0;
         $this->server         = $emailConfig['server'] ?? '';
         $this->emailAddress   = $emailConfig['emailAddress'] ?? '';
         $this->username       = $emailConfig['username'] ?? '';
         $this->password       = $emailConfig['password'] ?? '';
-        $this->port           = $emailConfig['port'] ?? '';
-        $this->authentication = $emailConfig['authentication'] ?? '';
+        $this->port           = $emailConfig['port'] ?? 465;
+        $this->authentication = $emailConfig['authentication'] ?? 'SSL';
         $this->createdAt      = $emailConfig['createdAt'] ?? '';
         $this->updatedAt      = $emailConfig['updatedAt'] ?? '';
     }
@@ -112,7 +113,19 @@ class EmailConfig {
         $this->updatedAt = $updatedAt;
     }
 
-    public function save() {
-        EmailConfigDAO::save($this);
+    public function save(): int {
+        return EmailConfigDAO::save($this);
+    }
+
+    public function fetch(): array {
+        $emailConfig = EmailConfigDAO::fetch();
+
+        foreach ($emailConfig as $key => $value) {
+            if (property_exists($this, $key)) {
+                $this->$key = $value;
+            }
+        }
+
+        return $emailConfig;
     }
 }

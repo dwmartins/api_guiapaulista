@@ -30,4 +30,16 @@ class TextValidator {
 
         return true;
     }
+
+    public static function emailServer(string $server) {
+        if (empty($server)) {
+            return false;
+        }
+
+        if (!filter_var($server, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) {
+            return false;
+        }
+
+        return true;
+    }
 }
