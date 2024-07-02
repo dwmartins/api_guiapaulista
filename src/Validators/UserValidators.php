@@ -132,4 +132,30 @@ class UserValidators {
             return false;
         }
     }
+
+    public static function recoverPassword(string $data) {
+        try {
+            $fields = [
+                "E-mail" => $data['email'] ?? ''
+            ];
+
+            Validator::validate($fields);
+
+            if(!TextValidator::email($data['email'])) {
+                Response::json([
+                    'error'     => true,
+                    'message'   => "O e-mail é invalido"
+                ], 400);
+
+                return false;
+            }
+        } catch (Exception $e) {
+            Response::json([
+                'error'     => true,
+                'message'   => $e->getMessage()
+            ], 400);
+
+            return false;
+        }
+    }
 }

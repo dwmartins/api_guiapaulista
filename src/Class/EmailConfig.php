@@ -12,6 +12,7 @@ class EmailConfig {
     private string $password;
     private int $port;
     private string $authentication;
+    private string $activated;
     private string $createdAt;
     private string $updatedAt;
 
@@ -22,6 +23,7 @@ class EmailConfig {
         $this->username       = $emailConfig['username'] ?? '';
         $this->port           = $emailConfig['port'] ?? 465;
         $this->authentication = $emailConfig['authentication'] ?? 'SSL';
+        $this->activated      = $emailConfig['activated'] ?? '';
         $this->createdAt      = $emailConfig['createdAt'] ?? '';
         $this->updatedAt      = $emailConfig['updatedAt'] ?? '';
 
@@ -106,6 +108,14 @@ class EmailConfig {
 
     public function setAuthentication(string $authentication): void {
         $this->authentication = $authentication;
+    }
+
+    public function getActivated(): string {
+        return $this->activated;
+    }
+
+    public function setActivated(string $activated): void {
+        $this->activated = $activated;
     }
 
     public function getCreatedAt(): string {

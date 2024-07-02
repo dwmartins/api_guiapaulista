@@ -12,7 +12,8 @@
         },
         "files": [
             "src/Utils/ShowAlertConsole.php",
-            "src/Utils/Logger.php"
+            "src/Utils/Logger.php",
+            "src/Utils/GenerateRandomCode.php"
         ]
     },
     "authors": [

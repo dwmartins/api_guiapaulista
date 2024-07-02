@@ -2,7 +2,7 @@
 
 use App\Models\Database;
 
-class Migration_20240630211926_email_config extends Database{
+class Migration_20240701220406_recover_password extends Database{
     protected $db;
 
     public function __construct() {
@@ -17,17 +17,14 @@ class Migration_20240630211926_email_config extends Database{
     public function up() {
         // Migration implementation (up)
         try {
-            $sql = "CREATE TABLE IF NOT EXISTS email_config (
+            $sql = "CREATE TABLE IF NOT EXISTS user_recover_password (
                 id INT AUTO_INCREMENT PRIMARY KEY,
-                server VARCHAR(255),
-                emailAddress VARCHAR(255),
-                username VARCHAR(255),
-                password VARCHAR(255),
-                port INT,
-                authentication VARCHAR(50),
-                activated ENUM('Y', 'N'),
+                user_id INT NOT NULL,
+                code VARCHAR(50),
+                used ENUM('Y', 'N'),
+                expiration DATETIME,
                 createdAt DATETIME,
-                updatedAt DATETIME
+                CONSTRAINT fk_userRecoverPasswordId FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
             );";
 
             $stmt = $this->db->prepare($sql);

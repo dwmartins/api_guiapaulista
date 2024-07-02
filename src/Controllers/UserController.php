@@ -29,8 +29,46 @@ class UserController {
         }
     }
 
-    public function show(Request $request, Response $response, $id) {
-        // Code to show a specific resource
+    public function recoverPassword(Request $request, Response $response) {
+        try {
+            $data = $request->body();
+
+            if(!UserValidators::recoverPassword($data)) {
+                return;
+            }
+
+            $userExists = UserDAO::fetchByEmail($data['email']);
+
+            if(!empty($userExists)) {
+                $user = new User($userExists);
+
+                if($user->getActive() === "Y") {
+                    $emailInfo = [
+                        'to' => $user->getEmail(),
+                        'subject' => 'Recuperação de senha'
+                    ];
+
+                    $sendEmail = new SendEmailController($emailInfo);
+                    $sendEmail->recoverPassword($user->getName());
+
+                    return $response->json([
+                        'success' => true,
+                        'message' => "Código de verificação encaminhado no e-mail."
+                    ]);
+                }
+            }
+
+            return $response->json([
+                'error'   => true,
+                'message'    => "E-mail inválido."
+            ], 401); 
+        } catch (Exception $e) {
+            logError($e->getMessage());
+            return $response->json([
+                'error'   => true,
+                'message' => "Falha ao enviar o código de recuperação de senha."
+            ], 500);
+        }
     }
 
     public function create(Request $request, Response $response) {
