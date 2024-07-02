@@ -2,8 +2,10 @@
 
 namespace App\Controllers;
 
+use App\Class\EmailConfig;
 use App\Class\User;
 use App\Class\UserPermissions;
+use App\Class\UserRecoverPassword;
 use App\Http\JWTManager;
 use App\Http\Request;
 use App\Http\Response;
@@ -37,6 +39,17 @@ class UserController {
                 return;
             }
 
+            $emailConfig = new EmailConfig();
+
+            if(!$emailConfig->configActive()) {
+                return $response->json([
+                    'error'   => true,
+                    'message' => "As configurações de e-mail não foram definidas."
+                ], 503);
+            }
+
+            $request->setAttribute('emailConfig', $emailConfig);
+
             $userExists = UserDAO::fetchByEmail($data['email']);
 
             if(!empty($userExists)) {
@@ -48,12 +61,22 @@ class UserController {
                         'subject' => 'Recuperação de senha'
                     ];
 
+                    $code = generateRandomCode(8);
+
+                    // Envia o código de recuperação no e-mail;
                     $sendEmail = new SendEmailController($emailInfo);
-                    $sendEmail->recoverPassword($user->getName());
+                    $sendEmail->recoverPassword($user->getName(), $code);
+
+                    // Salva os dados do código no banco;
+                    $userRecover = new UserRecoverPassword();
+                    $userRecover->setUserId($user->getId());
+                    $userRecover->setUsed("N");
+                    $userRecover->setExpiration(date('Y-m-d H:i:s', strtotime('+1 hour')));
+                    $userRecover->save();
 
                     return $response->json([
                         'success' => true,
-                        'message' => "Código de verificação encaminhado no e-mail."
+                        'message' => "Código de recuperação encaminhado no e-mail."
                     ]);
                 }
             }
@@ -62,11 +85,12 @@ class UserController {
                 'error'   => true,
                 'message'    => "E-mail inválido."
             ], 401); 
+
         } catch (Exception $e) {
             logError($e->getMessage());
             return $response->json([
                 'error'   => true,
-                'message' => "Falha ao enviar o código de recuperação de senha."
+                'message' => "Falha ao enviar o código de recuperação."
             ], 500);
         }
     }

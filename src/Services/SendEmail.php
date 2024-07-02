@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Class\EmailConfig;
+use App\Http\Request;
 use PHPMailer\PHPMailer\PHPMailer;
 
 class SendEmail {
@@ -53,7 +54,7 @@ class SendEmail {
     public function send() {
         $mail = new PHPMailer(true);
     
-        $emailConfig = new EmailConfig();
+        $emailConfig = Request::getAttribute('emailConfig');
         $emailConfig->fetch();
 
         if($emailConfig->getActivated() === "N") {
@@ -61,13 +62,15 @@ class SendEmail {
         }
     
         try {
+            $mail->setLanguage("br");
             $mail->isSMTP();
             $mail->Host       = $emailConfig->getServer();
             $mail->SMTPAuth   = true;
             $mail->Username   = $emailConfig->getUsername();
             $mail->Password   = $emailConfig->getPassword();
-            $mail->SMTPSecure = $emailConfig->getAuthentication();
+            $mail->SMTPSecure = strtolower($emailConfig->getAuthentication());
             $mail->Port       = $emailConfig->getPort();
+            $mail->CharSet = 'UTF-8';
     
             $mail->setFrom($emailConfig->getEmailAddress(), $emailConfig->getEmailAddress());
             $mail->addAddress($this->to);

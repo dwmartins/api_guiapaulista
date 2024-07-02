@@ -23,7 +23,7 @@ class EmailConfig {
         $this->username       = $emailConfig['username'] ?? '';
         $this->port           = $emailConfig['port'] ?? 465;
         $this->authentication = $emailConfig['authentication'] ?? 'SSL';
-        $this->activated      = $emailConfig['activated'] ?? '';
+        $this->activated      = $emailConfig['activated'] ?? 'N';
         $this->createdAt      = $emailConfig['createdAt'] ?? '';
         $this->updatedAt      = $emailConfig['updatedAt'] ?? '';
 
@@ -43,6 +43,7 @@ class EmailConfig {
             'password'       => $this->password,
             'port'           => $this->port,
             'authentication' => $this->authentication,
+            'activated'      => $this->activated,
             'createdAt'      => $this->createdAt,
             'updatedAt'      => $this->updatedAt,
         ];
@@ -152,5 +153,10 @@ class EmailConfig {
 
     public function update(): int {
         return EmailConfigDAO::update($this);
+    }
+
+    public function configActive(): bool {
+        $this->fetch();
+        return $this->getActivated() === "Y" ? true : false;
     }
 }

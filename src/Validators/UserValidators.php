@@ -133,7 +133,7 @@ class UserValidators {
         }
     }
 
-    public static function recoverPassword(string $data) {
+    public static function recoverPassword(array $data) {
         try {
             $fields = [
                 "E-mail" => $data['email'] ?? ''
@@ -149,6 +149,8 @@ class UserValidators {
 
                 return false;
             }
+
+            return true;
         } catch (Exception $e) {
             Response::json([
                 'error'     => true,

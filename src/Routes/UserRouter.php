@@ -19,3 +19,5 @@ Route::put('/user', 'UserController@update', [
 Route::delete('/user/{id}', 'UserController@delete', [
     [UserMiddleware::class, 'isAuth']
 ]);
+
+Route::post('/user/recover-password', 'UserController@recoverPassword');
