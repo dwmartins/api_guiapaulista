@@ -21,3 +21,4 @@ Route::delete('/user/{id}', 'UserController@delete', [
 ]);
 
 Route::post('/user/recover-password', 'UserController@recoverPassword');
+Route::post('/user/validate-recovery-code', 'UserController@validateRecoveryCode');

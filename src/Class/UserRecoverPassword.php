@@ -83,4 +83,15 @@ class UserRecoverPassword {
     public function save(): int {
         return UserRecoverPasswordDAO::save($this);
     }
+
+    public function fetch(): array {
+        $codeInfo = UserRecoverPasswordDAO::fetch($this);
+
+        foreach ($codeInfo as $key => $value) {
+            if (property_exists($this, $key)) {
+                $this->$key = $value;
+            }
+        }
+        return $codeInfo;
+    }
 }

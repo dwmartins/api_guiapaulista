@@ -10,6 +10,7 @@ use App\Http\JWTManager;
 use App\Http\Request;
 use App\Http\Response;
 use App\Models\UserDAO;
+use App\Validators\TextValidator;
 use App\Validators\UserValidators;
 use Exception;
 
@@ -69,6 +70,7 @@ class UserController {
 
                     // Salva os dados do código no banco;
                     $userRecover = new UserRecoverPassword();
+                    $userRecover->setCode($code);
                     $userRecover->setUserId($user->getId());
                     $userRecover->setUsed("N");
                     $userRecover->setExpiration(date('Y-m-d H:i:s', strtotime('+1 hour')));
@@ -91,6 +93,52 @@ class UserController {
             return $response->json([
                 'error'   => true,
                 'message' => "Falha ao enviar o código de recuperação."
+            ], 500);
+        }
+    }
+
+    public function validateRecoveryCode(Request $request, Response $response) {
+        try {
+            $data = $request->body();
+            $errorMsg = '';
+
+            if(!isset($data['code']) || !TextValidator::fullText($data['code'])) {
+                return $response->json([
+                    'error'   => true,
+                    'message' => "O campo (código de recuperação) está vazio ou não é valido."
+                ], 400);
+            }
+
+            $recoverPassword = new UserRecoverPassword($data);
+            $codeExists = $recoverPassword->fetch();
+
+            if(!empty($codeExists)) {
+                if($recoverPassword->getUsed() == "Y") {
+                    $errorMsg = "O código de recuperação é invalido";
+                }
+
+                if($recoverPassword->getExpiration() < date('Y-m-d H:i:s')) {
+                    $errorMsg = "O código de recuperação já expirou.";
+                }
+
+                if(empty($errorMsg)) {
+                    return $response->json([
+                        'success' => true,
+                        'message' => "O código de verificação é valido."
+                    ]);
+                }
+            }
+
+            return $response->json([
+                'error'   => true,
+                'message'    => $errorMsg
+            ], 401); 
+
+        } catch (Exception $e) {
+            logError($e->getMessage());
+            return $response->json([
+                'error'   => true,
+                'message' => "Falha ao validar o código de recuperação."
             ], 500);
         }
     }

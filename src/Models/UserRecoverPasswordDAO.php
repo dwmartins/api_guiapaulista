@@ -6,6 +6,7 @@ use App\Class\UserRecoverPassword;
 use App\Models\Database;
 use PDOException;
 use Exception;
+use PDO;
 
 class UserRecoverPasswordDAO extends Database{
     public static function save(UserRecoverPassword $userRecoverPassword) {
@@ -42,7 +43,21 @@ class UserRecoverPasswordDAO extends Database{
         }
     }
 
-    public static function fetch($id) {
-        // Implementation of the read method
+    public static function fetch(UserRecoverPassword $userRecoverPassword) {
+        try {
+            $pdo = self::getConnection();
+
+            $stmt = $pdo->prepare(
+                "SELECT * FROM user_recover_password WHERE code = ? LIMIT 1"
+            );
+
+            $stmt->execute([$userRecoverPassword->getCode()]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            return $result ?: [];
+        } catch (PDOException $e) {
+            logError($e->getMessage());
+            throw new Exception("Error when executing query to search password recovery code");
+        }
     }
 }
