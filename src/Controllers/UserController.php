@@ -62,15 +62,19 @@ class UserController {
                         'subject' => 'Recuperação de senha'
                     ];
 
-                    $code = generateRandomCode(8);
+                    $token = JWTManager::newCrypto();
+                    
+                    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+                    $domain = $_SERVER['HTTP_HOST'];
+                    $resetLink = $protocol . "://" . $domain . "/usuario/recuperacao-senha?userId=". $user->getId() ."&token=" . $token;
 
-                    // Envia o código de recuperação no e-mail;
+                    // Envia o link de recuperação no e-mail;
                     $sendEmail = new SendEmailController($emailInfo);
-                    $sendEmail->recoverPassword($user->getName(), $code);
+                    $sendEmail->recoverPassword($user->getName(), $resetLink);
 
-                    // Salva os dados do código no banco;
+                    // Salva os dados do link no banco;
                     $userRecover = new UserRecoverPassword();
-                    $userRecover->setCode($code);
+                    $userRecover->setToken($token);
                     $userRecover->setUserId($user->getId());
                     $userRecover->setUsed("N");
                     $userRecover->setExpiration(date('Y-m-d H:i:s', strtotime('+1 hour')));
@@ -78,7 +82,7 @@ class UserController {
 
                     return $response->json([
                         'success' => true,
-                        'message' => "Código de recuperação encaminhado no e-mail."
+                        'message' => "As instruções para redefinição de senha foi enviado para o seu e-mail."
                     ]);
                 }
             }
@@ -97,41 +101,37 @@ class UserController {
         }
     }
 
-    public function validateRecoveryCode(Request $request, Response $response) {
+    public function validateRecoveryToken(Request $request, Response $response) {
         try {
-            $data = $request->body();
-            $errorMsg = '';
+            $requestData = $request->body();
 
-            if(!isset($data['code']) || !TextValidator::fullText($data['code'])) {
-                return $response->json([
-                    'error'   => true,
-                    'message' => "O campo (código de recuperação) está vazio ou não é valido."
-                ], 400);
-            }
+            $data = [
+                'user_id' => $requestData['userId'] ?? 0,
+                'token'  => $requestData['token'] ?? ''
+            ];
 
             $recoverPassword = new UserRecoverPassword($data);
-            $codeExists = $recoverPassword->fetch();
+            $tokenExists = $recoverPassword->fetchByTokenAndUser();
 
-            if(!empty($codeExists)) {
-                if($recoverPassword->getUsed() == "Y") {
-                    $errorMsg = "O código de recuperação é invalido";
-                }
+            if(!empty($tokenExists) && $recoverPassword->getExpiration() >= date('Y-m-d H:i:s')) {
 
-                if($recoverPassword->getExpiration() < date('Y-m-d H:i:s')) {
-                    $errorMsg = "O código de recuperação já expirou.";
-                }
+                $user = new User();
+                $user->fetchById($data['user_id']);
 
-                if(empty($errorMsg)) {
-                    return $response->json([
-                        'success' => true,
-                        'message' => "O código de verificação é valido."
-                    ]);
-                }
+                return $response->json([
+                    'success'    => true,
+                    'tokenValid' => true,
+                    'userData'   => [
+                        'id'       => $user->getId(),
+                        'name'     => $user->getName(),
+                        'lastName' => $user->getLastName()
+                    ]
+                ]);
             }
 
             return $response->json([
                 'error'   => true,
-                'message'    => $errorMsg
+                'message'    => "Esse link não é valido ou já expirou."
             ], 401); 
 
         } catch (Exception $e) {

@@ -43,15 +43,19 @@ class UserRecoverPasswordDAO extends Database{
         }
     }
 
-    public static function fetch(UserRecoverPassword $userRecoverPassword) {
+    public static function fetchByTokenAndUser(UserRecoverPassword $userRecoverPassword) {
         try {
             $pdo = self::getConnection();
 
             $stmt = $pdo->prepare(
-                "SELECT * FROM user_recover_password WHERE code = ? LIMIT 1"
+                "SELECT * FROM user_recover_password WHERE user_id = ? AND token = ? AND used = ? LIMIT 1"
             );
 
-            $stmt->execute([$userRecoverPassword->getCode()]);
+            $stmt->execute([
+                $userRecoverPassword->getUserId(),
+                $userRecoverPassword->getToken(),
+                "N"
+            ]);
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
             return $result ?: [];

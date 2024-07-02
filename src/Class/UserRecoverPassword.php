@@ -7,7 +7,7 @@ use App\Models\UserRecoverPasswordDAO;
 class UserRecoverPassword {
     private int $id;
     private int $user_id;
-    private string $code;
+    private string $token;
     private string $used;
     private string $expiration;
     private string $createdAt;
@@ -15,7 +15,7 @@ class UserRecoverPassword {
     public function __construct(array $recover = null) {
         $this->id = $recover['id'] ?? 0;
         $this->user_id = $recover['user_id'] ?? 0;
-        $this->code = $recover['code'] ?? '';
+        $this->token = $recover['token'] ?? '';
         $this->used = $recover['used'] ?? 'Y';
         $this->expiration = $recover['expiration'] ?? '';
         $this->createdAt = $recover['createdAt'] ?? '';
@@ -25,7 +25,7 @@ class UserRecoverPassword {
         return [
             'id'         => $this->id,
             'user_id'    => $this->user_id,
-            'code'       => $this->code,
+            'token'       => $this->token,
             'used'       => $this->used,
             'expiration' => $this->expiration,
             'createdAt'  => $this->createdAt,
@@ -48,12 +48,12 @@ class UserRecoverPassword {
         $this->user_id = $user_id;
     }
 
-    public function getCode(): string {
-        return $this->code;
+    public function getToken(): string {
+        return $this->token;
     }
 
-    public function setCode(string $code): void {
-        $this->code = $code;
+    public function setToken(string $token): void {
+        $this->token = $token;
     }
 
     public function getUsed(): string {
@@ -84,8 +84,8 @@ class UserRecoverPassword {
         return UserRecoverPasswordDAO::save($this);
     }
 
-    public function fetch(): array {
-        $codeInfo = UserRecoverPasswordDAO::fetch($this);
+    public function fetchByTokenAndUser(): array {
+        $codeInfo = UserRecoverPasswordDAO::fetchByTokenAndUser($this);
 
         foreach ($codeInfo as $key => $value) {
             if (property_exists($this, $key)) {

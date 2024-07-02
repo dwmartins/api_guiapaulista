@@ -158,4 +158,22 @@ class User {
     public function delete(): int {
         return UserDAO::delete($this);
     }
+
+    public function fetchById(int $user_id): array {
+        $user = UserDAO::fetchById($user_id);
+
+        if(!empty($user)) {
+            foreach ($user as $key => $value) {
+                if(empty($value)) {
+                    continue;
+                }
+
+                if (property_exists($this, $key)) {
+                    $this->$key = $value;
+                }
+            }
+        }
+
+        return $user;
+    }
 }

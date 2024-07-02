@@ -18,14 +18,14 @@ class SendEmailController {
         $this->mailSend = new SendEmail();
     }
 
-    public function recoverPassword(string $username, string $code) {
+    public function recoverPassword(string $username, string $link) {
         try {
             $siteName = "dwmcode"; // teste, sera desenvolvido os métodos de informações do site.
 
             $template = file_get_contents(__DIR__."/../EmailTemplates/recoverPassword.html");
             $template = str_replace('{SITENAME}', $siteName, $template);
             $template = str_replace('{USERNAME}', $username, $template);
-            $template = str_replace('{CODE}', $code, $template);
+            $template = str_replace('{LINK}', $link, $template);
 
             $this->mailSend->setTo($this->to);
             $this->mailSend->setSubject($this->subject);

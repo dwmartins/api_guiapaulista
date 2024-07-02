@@ -20,7 +20,7 @@ class Migration_20240701220406_recover_password extends Database{
             $sql = "CREATE TABLE IF NOT EXISTS user_recover_password (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 user_id INT NOT NULL,
-                code VARCHAR(50),
+                token TEXT NOT NULL,
                 used ENUM('Y', 'N'),
                 expiration DATETIME,
                 createdAt DATETIME,
