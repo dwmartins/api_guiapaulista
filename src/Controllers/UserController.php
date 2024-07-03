@@ -175,7 +175,7 @@ class UserController {
                 $user = new User();
                 $user->fetchById($requestData['userId']);
     
-                if(!empty($user) && $user->getActive() === "Y") {
+                if(!empty($user->getId()) && $user->getActive() === "Y") {
                     $user->setPassword($requestData['password']);
                     $user->updatePassword();
                     

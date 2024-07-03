@@ -17,10 +17,10 @@ class UserPermissions {
     public function __construct(array $permission = null) {
         $this->id           = $permission['id'] ?? 0;
         $this->user_id      = $permission['user_id'] ?? 0;
-        $this->users        = !is_string($permission['users']) ? json_encode($permission['users']) : $permission['users'];
-        $this->content      = !is_string($permission['content']) ? json_encode($permission['content']) : $permission['content'];
-        $this->siteInfo     = !is_string($permission['siteInfo']) ? json_encode($permission['siteInfo']) : $permission['siteInfo'];
-        $this->emailSending = !is_string($permission['emailSending']) ? json_encode($permission['emailSending']) : $permission['emailSending'];
+        $this->users        = isset($permission['users']) ? (!is_string($permission['users']) ? json_encode($permission['users']) : $permission['users']) : '';
+        $this->content      = isset($permission['content']) ? (!is_string($permission['content']) ? json_encode($permission['content']) : $permission['content']) : '';
+        $this->siteInfo     = isset($permission['siteInfo']) ? (!is_string($permission['siteInfo']) ? json_encode($permission['siteInfo']) : $permission['siteInfo']) : '';
+        $this->emailSending = isset($permission['emailSending']) ? (!is_string($permission['emailSending']) ? json_encode($permission['emailSending']) : $permission['emailSending']) : '';
         $this->createdAt    = $permission['createdAt'] ?? '';
         $this->updatedAt    = $permission['updatedAt'] ?? '';
     }
@@ -100,5 +100,23 @@ class UserPermissions {
 
     public function save() {
         UserPermissionsDAO::save($this);
+    }
+
+    public function getPermissions(User $user) {
+        $userPermissions = UserPermissionsDAO::getPermissions($user);
+
+        if(!empty($user)) {
+            foreach ($userPermissions as $key => $value) {
+                if(empty($value)) {
+                    continue;
+                }
+
+                if (property_exists($this, $key)) {
+                    $this->$key = $value;
+                }
+            }
+        }
+
+        return $userPermissions;
     }
 }

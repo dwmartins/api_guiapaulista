@@ -93,4 +93,29 @@ class UserMiddleware {
             ], 403);
         }
     }
+
+    public function emailSendingSettings(Request $request, Response $response) {
+        $user = $request->getAttribute('userRequest');
+
+        if($user->getRole() === 'super') {
+            return true;
+        }
+
+        $userPermission = new UserPermissions();
+        $userPermission->getPermissions($user);
+
+        if(!empty($userPermission->getId())) {
+            $emailSendConfig = $userPermission->getEmailSending();
+
+            if($emailSendConfig['permission']) {
+                return true;
+            }
+        }
+
+        return $response::json([
+            'error'             => true,
+            'invalidPermission' => "Você não tem permissão para executar essa ação."
+        ], 403);
+        
+    }
 }
