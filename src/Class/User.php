@@ -159,6 +159,10 @@ class User {
         return UserDAO::updatePassword($this);
     }
 
+    public function updatePhoto(): int {
+        return UserDAO::updatePhoto($this);
+    }
+
     public function delete(): int {
         return UserDAO::delete($this);
     }

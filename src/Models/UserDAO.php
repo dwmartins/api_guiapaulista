@@ -114,6 +114,33 @@ class UserDAO extends Database {
         }
     }
 
+    public static function updatePhoto(User $user): int {
+        try {
+            $pdo = self::getConnection();
+
+            $user->setUpdatedAt(date('Y-m-d H:i:s'));
+
+            $values = [
+                $user->getPhoto(),
+                $user->getUpdatedAt(),
+                $user->getId()
+            ];
+
+            $stmt = $pdo->prepare(
+                "UPDATE users 
+                SET photo = ?, updatedAt = ? 
+                WHERE id = ?"
+            );
+
+            $stmt->execute($values);
+            return $stmt->rowCount();
+            
+        } catch (PDOException $e) {
+            logError($e->getMessage());
+            throw new Exception("Error when executing query to update photo");
+        }
+    }
+ 
     public static function delete(User $user): int {
         try {
             $pdo = self::getConnection();

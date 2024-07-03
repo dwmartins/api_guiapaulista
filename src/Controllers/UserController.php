@@ -10,11 +10,14 @@ use App\Http\JWTManager;
 use App\Http\Request;
 use App\Http\Response;
 use App\Models\UserDAO;
-use App\Validators\TextValidator;
+use App\Utils\UploadFile;
+use App\Validators\FileValidators;
 use App\Validators\UserValidators;
 use Exception;
 
 class UserController {
+    private string $userImagesFolder = "userImages";
+
     public function fetch(Request $request, Response $response) {
         try {
             $filters = $request->queryParams();
@@ -199,6 +202,46 @@ class UserController {
             return $response->json([
                 'error'   => true,
                 'message' => "Falha ao atualizar sua senha"
+            ], 500);
+        }
+    }
+
+    public function updatePhoto(Request $request, Response $response) {
+        try {
+            $file = $request->files();
+            $requestData = $request->body();
+
+            if(isset($file['photo']) && !empty($file['photo'])) {
+                $photo = $file['photo'];
+                $fileData = FileValidators::validImage($photo);
+
+                $user = new User();
+                $user->fetchById($requestData['userId']);
+
+                if(isset($fileData['invalid'])) {
+                    return $response->json([
+                        'error'   => true,
+                        'message' => $fileData['invalid']
+                    ], 400);
+                }
+
+                $fileName = $user->getId() . "_user." . $fileData['mimeType'];
+                UploadFile::uploadFile($photo, $this->userImagesFolder, $fileName);
+                
+                $user->setPhoto($fileName);
+                $user->updatePhoto();
+
+                return $response->json([
+                    'success' => true,
+                    'message' => "Foto alterada com sucesso."
+                ]);
+            }
+
+        } catch (Exception $e) {
+            logError($e->getMessage());
+            return $response->json([
+                'error'   => true,
+                'message' => "Falha ao atualizar a foto."
             ], 500);
         }
     }
