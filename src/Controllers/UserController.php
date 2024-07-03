@@ -131,7 +131,7 @@ class UserController {
 
             return $response->json([
                 'error'   => true,
-                'message'    => "Esse link não é valido ou já expirou."
+                'message'    => "O link de recuperação não é valido ou já expirou."
             ], 401); 
 
         } catch (Exception $e) {
@@ -139,6 +139,66 @@ class UserController {
             return $response->json([
                 'error'   => true,
                 'message' => "Falha ao validar o código de recuperação."
+            ], 500);
+        }
+    }
+
+    /**
+    * Updates the user's password using the recovery token.
+    * Method HTTP: PUT
+    * Expected data in the request body:
+    * - password (string): The user's new password. (required)
+    * - token (string): The recovery token sent to the user's email. (required)
+    * - userId (int): The ID of the user who wants to reset the password. (required)
+    * @return Response
+    */
+    public function updatePasswordByRecovery(Request $request, Response $response) {
+        try {
+            $requestData = $request->body();
+
+            if(empty($requestData['password'])) {
+                return $response->json([
+                    'error'   => true,
+                    'message' => "O campo (Senha) é obrigatório"
+                ], 400);
+            }
+
+            $data = [
+                'user_id' => $requestData['userId'] ?? 0,
+                'token'  => $requestData['token'] ?? ''
+            ];
+
+            $recoverPassword = new UserRecoverPassword($data);
+            $tokenExists = $recoverPassword->fetchByTokenAndUser();
+
+            if(!empty($tokenExists) && $recoverPassword->getExpiration() >= date('Y-m-d H:i:s')) {
+                $user = new User();
+                $user->fetchById($requestData['userId']);
+    
+                if(!empty($user) && $user->getActive() === "Y") {
+                    $user->setPassword($requestData['password']);
+                    $user->updatePassword();
+                    
+                    $recoverPassword->setUsed("Y");
+                    $recoverPassword->update();
+
+                    return $response->json([
+                        'success'   => true,
+                        'message'   => "Senha atualizada com sucesso."
+                    ]);
+                }
+            }
+
+            return $response->json([
+                'error'   => true,
+                'message'    => "O link de recuperação não é valido ou já expirou."
+            ], 401); 
+
+        } catch (Exception $e) {
+            logError($e->getMessage());
+            return $response->json([
+                'error'   => true,
+                'message' => "Falha ao atualizar sua senha"
             ], 500);
         }
     }
@@ -160,7 +220,6 @@ class UserController {
             }
 
             $user = new User($body);
-            $user->setPassword(password_hash($user->getPassword(), PASSWORD_DEFAULT));
             $user->setToken(JWTManager::newCrypto());
             $user->setCreatedBy($userRequest->getId());
             $user->save();

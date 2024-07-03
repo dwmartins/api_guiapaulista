@@ -11,6 +11,7 @@ class UserRecoverPassword {
     private string $used;
     private string $expiration;
     private string $createdAt;
+    private string $updatedAt;
 
     public function __construct(array $recover = null) {
         $this->id = $recover['id'] ?? 0;
@@ -19,6 +20,7 @@ class UserRecoverPassword {
         $this->used = $recover['used'] ?? 'Y';
         $this->expiration = $recover['expiration'] ?? '';
         $this->createdAt = $recover['createdAt'] ?? '';
+        $this->updatedAt = $recover['updatedAt'] ?? '';
     }
 
     public function toArray(): array {
@@ -29,6 +31,7 @@ class UserRecoverPassword {
             'used'       => $this->used,
             'expiration' => $this->expiration,
             'createdAt'  => $this->createdAt,
+            'updatedAt' => $this->updatedAt,
         ];
     }
 
@@ -80,6 +83,14 @@ class UserRecoverPassword {
         $this->createdAt = $createdAt;
     }
 
+    public function getUpdatedAt(): string {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt($updatedAt): void {
+        $this->updatedAt = $updatedAt;
+    }
+
     public function save(): int {
         return UserRecoverPasswordDAO::save($this);
     }
@@ -88,10 +99,18 @@ class UserRecoverPassword {
         $codeInfo = UserRecoverPasswordDAO::fetchByTokenAndUser($this);
 
         foreach ($codeInfo as $key => $value) {
+            if(empty($value)) {
+                continue;
+            }
+            
             if (property_exists($this, $key)) {
                 $this->$key = $value;
             }
         }
         return $codeInfo;
+    }
+
+    public function update(): int {
+        return UserRecoverPasswordDAO::update($this);
     }
 }

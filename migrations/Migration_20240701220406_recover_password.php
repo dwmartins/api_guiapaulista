@@ -24,6 +24,7 @@ class Migration_20240701220406_recover_password extends Database{
                 used ENUM('Y', 'N'),
                 expiration DATETIME,
                 createdAt DATETIME,
+                updatedAt DATETIME
                 CONSTRAINT fk_userRecoverPasswordId FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
             );";
 

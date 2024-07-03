@@ -57,7 +57,7 @@ class UserDAO extends Database {
             $columns = [];
             $values = [];
 
-            $ignoredColumns = ["id", "photo", "password", "token", "createdAt"];
+            $ignoredColumns = ["id", "photo", "password", "token", "createdBy", "createdAt"];
 
             foreach ($userArray as $key => $value) {
                 if (in_array($key, $ignoredColumns)) {
@@ -84,6 +84,33 @@ class UserDAO extends Database {
         } catch (PDOException $e) {
             logError($e->getMessage());
             throw new Exception("Error when executing query to update user");
+        }
+    }
+
+    public static function updatePassword(User $user): int {
+        try {
+            $pdo = self::getConnection();
+
+            $user->setUpdatedAt(date('Y-m-d H:i:s'));
+
+            $values = [
+                $user->getPassword(),
+                $user->getUpdatedAt(),
+                $user->getId()
+            ];
+
+            $stmt = $pdo->prepare(
+                "UPDATE users 
+                SET password = ?, updatedAt = ? 
+                WHERE id = ?"
+            );
+
+            $stmt->execute($values);
+            return $stmt->rowCount();
+
+        } catch (PDOException $e) {
+            logError($e->getMessage());
+            throw new Exception("Error when executing query to update password");
         }
     }
 

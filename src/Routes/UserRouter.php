@@ -22,3 +22,4 @@ Route::delete('/user/{id}', 'UserController@delete', [
 
 Route::post('/user/recover-password', 'UserController@recoverPassword');
 Route::get('/user/validate-recovery-token', 'UserController@validateRecoveryToken');
+Route::put('/user/update-password-by-token', 'UserController@updatePasswordByRecovery');

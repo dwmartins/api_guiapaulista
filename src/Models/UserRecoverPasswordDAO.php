@@ -13,6 +13,7 @@ class UserRecoverPasswordDAO extends Database{
         try {
             $pdo = self::getConnection();
             $userRecoverPassword->setCreatedAt(date('Y-m-d H:i:s'));
+            $userRecoverPassword->setUpdatedAt(date('Y-m-d H:i:s'));
             $recoverArray = $userRecoverPassword->toArray();
 
             $columns = [];
@@ -39,7 +40,33 @@ class UserRecoverPasswordDAO extends Database{
 
         } catch (PDOException $e) {
             logError($e->getMessage());
-            throw new Exception("Error when executing query to save password recovery code");
+            throw new Exception("Error when executing query to save password recovery token");
+        }
+    }
+
+    public static function update(UserRecoverPassword $userRecoverPassword) {
+        try {
+            $pdo = self::getConnection();
+            $userRecoverPassword->setUpdatedAt(date('Y-m-d H:i:s'));
+
+            $values = [
+                $userRecoverPassword->getUsed(),
+                $userRecoverPassword->getUpdatedAt(),
+                $userRecoverPassword->getId()
+            ];
+
+            $stmt = $pdo->prepare(
+                "UPDATE user_recover_password 
+                SET used = ?, updatedAt = ?
+                WHERE id = ?"
+            );
+
+            $stmt->execute($values);
+            return $stmt->rowCount();
+
+        } catch (PDOException $e) {
+            logError($e->getMessage());
+            throw new Exception("Error when executing query to update password recovery token");
         }
     }
 
@@ -61,7 +88,7 @@ class UserRecoverPasswordDAO extends Database{
             return $result ?: [];
         } catch (PDOException $e) {
             logError($e->getMessage());
-            throw new Exception("Error when executing query to search password recovery code");
+            throw new Exception("Error when executing query to search password recovery token");
         }
     }
 }

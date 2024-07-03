@@ -87,7 +87,7 @@ class User {
     }
 
     public function setPassword(string $password): void {
-        $this->password = $password;
+        $this->password = password_hash($password, PASSWORD_DEFAULT);
     }
 
     public function getToken(): string {
@@ -153,6 +153,10 @@ class User {
 
     public function update(): int {
         return UserDAO::update($this);
+    }
+
+    public function updatePassword(): int {
+        return UserDAO::updatePassword($this);
     }
 
     public function delete(): int {
