@@ -20,7 +20,9 @@ Route::delete('/user/{id}', 'UserController@delete', [
     [UserMiddleware::class, 'isAuth']
 ]);
 
-Route::post('/user/update-photo', 'UserController@updatePhoto');
+Route::post('/user/update-photo', 'UserController@updatePhoto', [
+    [UserMiddleware::class, 'isAuth']
+]);
 
 Route::post('/user/recover-password', 'UserController@recoverPassword');
 Route::get('/user/validate-recovery-token', 'UserController@validateRecoveryToken');
