@@ -354,6 +354,39 @@ class UserController {
         }
     }
 
+    /**
+     * Updates user role
+     * MEthod HTTP: PUT
+     * 
+     * Expected data in the request body:
+     * - userId (int)
+     * - role (string)
+     * @return Response
+     */
+    public function updateRole(Request $request, Response $response) {
+        try {
+            $requestData = $request->body();
+
+            $user = new User();
+            $user->fetchById($requestData['userId']);
+
+            $user->setRole($requestData['role']);
+            $user->updateRole();
+
+            return $response->json([
+                'success'   => true,
+                'message'   => "Função do usuário atualizado com sucesso."
+            ], 201);
+
+        } catch (Exception $e) {
+            logError($e->getMessage());
+            return $response->json([
+                'error'   => true,
+                'message' => "Falha ao atualizar a função do usuário."
+            ], 500);
+        }
+    }
+
     public function delete(Request $request, Response $response, $id) {
         try {
             $user = UserDAO::fetchById($id[0]);

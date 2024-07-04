@@ -57,7 +57,7 @@ class UserDAO extends Database {
             $columns = [];
             $values = [];
 
-            $ignoredColumns = ["id", "photo", "password", "token", "createdBy", "createdAt"];
+            $ignoredColumns = ["id", "photo", "password", "token", "role", "createdBy", "createdAt"];
 
             foreach ($userArray as $key => $value) {
                 if (in_array($key, $ignoredColumns)) {
@@ -111,6 +111,33 @@ class UserDAO extends Database {
         } catch (PDOException $e) {
             logError($e->getMessage());
             throw new Exception("Error when executing query to update password");
+        }
+    }
+
+    public static function updateRole(User $user) {
+        try {
+            $pdo = self::getConnection();
+
+            $user->setUpdatedAt(date('Y-m-d H:i:s'));
+
+            $values = [
+                $user->getRole(),
+                $user->getUpdatedAt(),
+                $user->getId()
+            ];
+            
+            $stmt = $pdo->prepare(
+                "UPDATE users 
+                SET role = ?, updatedAt = ? 
+                WHERE id = ?"
+            );
+
+            $stmt->execute($values);
+            return $stmt->rowCount();
+
+        } catch (PDOException $e) {
+            logError($e->getMessage());
+            throw new Exception("Error when executing query to update user role");
         }
     }
 

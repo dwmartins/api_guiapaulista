@@ -9,7 +9,7 @@ Route::get('/user', 'UserController@fetch', [
 
 Route::post('/user', 'UserController@create', [
     [UserMiddleware::class, 'isAuth'],
-    [UserMiddleware::class, 'permissionsToUsers', 'create']
+    [UserMiddleware::class, 'permissionsToUsers']
 ]);
 
 Route::put('/user', 'UserController@update', [
@@ -22,6 +22,11 @@ Route::delete('/user/{id}', 'UserController@delete', [
 
 Route::post('/user/update-photo', 'UserController@updatePhoto', [
     [UserMiddleware::class, 'isAuth']
+]);
+
+Route::put('/user/update-role', 'UserController@updateRole', [
+    [UserMiddleware::class, 'isAuth'],
+    [UserMiddleware::class, 'permissionsToUsers']
 ]);
 
 Route::post('/user/recover-password', 'UserController@recoverPassword');

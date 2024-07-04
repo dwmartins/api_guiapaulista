@@ -65,7 +65,7 @@ class UserMiddleware {
         }
     }
 
-    public function permissionsToUsers(Request $request, Response $response, $param) {
+    public function permissionsToUsers(Request $request, Response $response) {
         $user = $request->getAttribute('userRequest');
 
         if($user->getRole() === 'super') {

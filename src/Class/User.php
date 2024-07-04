@@ -184,4 +184,26 @@ class User {
 
         return $user;
     }
-}
+
+    public function fetchByEmail(string $email): array {
+        $user = UserDAO::fetchByEmail($email);
+
+        if(!empty($user)) {
+            foreach ($user as $key => $value) {
+                if(empty($value)) {
+                    continue;
+                }
+
+                if (property_exists($this, $key)) {
+                    $this->$key = $value;
+                }
+            }
+        }
+
+        return $user;
+    }
+
+    public function updateRole(): int {
+        return UserDAO::updateRole($this);
+    }
+ }
