@@ -4,7 +4,7 @@ namespace App\Validators;
 
 class TextValidator {
     public static function fullText(string $field) {
-        $fullText = "/^[a-zA-Z0-9\s\-\_\.\,\!\?\@\#\$\%\&\*\(\)]+$/";
+        $fullText = "/^[\p{L}0-9\s\-_.,!?@#\$%&*()]+$/u";
 
         if(!preg_match($fullText, $field)) {
             return false;
@@ -41,5 +41,11 @@ class TextValidator {
         }
 
         return true;
+    }
+
+    public static function isValidUrl(string $url) {
+        $pattern = '/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/';
+    
+        return preg_match($pattern, $url);
     }
 }

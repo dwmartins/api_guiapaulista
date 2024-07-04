@@ -30,6 +30,10 @@ class Migration_20240624212558_table_site_info extends Database{
                 facebook VARCHAR(250),
                 description LONGTEXT,
                 keywords LONGTEXT,
+                ico VARCHAR(250),
+                logoImage VARCHAR(50),
+                coverImage VARCHAR(50),
+                defaultImage VARCHAR(50),
                 createdAt DATETIME,
                 updatedAt DATETIME);
             ";
