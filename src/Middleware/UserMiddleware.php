@@ -9,6 +9,7 @@ use App\Http\Request;
 use App\Http\Response;
 use App\Models\UserDAO;
 use App\Models\UserPermissionsDAO;
+use Exception;
 
 class UserMiddleware {
     public static function isAuth(Request $request, Response $response) {
@@ -117,5 +118,38 @@ class UserMiddleware {
             'invalidPermission' => "Você não tem permissão para executar essa ação."
         ], 403);
         
+    }
+
+    public function siteInfo(Request $request, Response $response) {
+        try {
+            $user = $request->getAttribute('userRequest');
+
+            if($user->getRole() === 'super') {
+                return true;
+            }
+
+            $userPermission = new UserPermissions();
+            $userPermission->getPermissions($user);
+
+            if(!empty($userPermission->getId())) {
+                $siteInfoConfig = $userPermission->getSiteInfo();
+
+                if($siteInfoConfig['permission']) {
+                    return true;
+                }
+            }
+
+            return $response::json([
+                'error'             => true,
+                'invalidPermission' => "Você não tem permissão para executar essa ação."
+            ], 403);
+
+        } catch (Exception $e) {
+            logError($e->getMessage());
+            return $response->json([
+                'error'   => true,
+                'message' => "Oops, Ocorreu um erro inesperado."
+            ], 500);
+        }
     }
 }
