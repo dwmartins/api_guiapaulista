@@ -20,13 +20,7 @@ class SiteInfoDAO extends Database {
             $placeholders = [];
             $values = [];
 
-            $ignoredColumns = ["ico", "logoImage", "coverImage", "defaultImage"];
-
             foreach ($siteInfo->toArray() as $key => $value) {
-                if (in_array($key, $ignoredColumns)) {
-                    continue;
-                }
-
                 $columns[] = $key;
                 $placeholders[] = "?";
                 $values[] = $value;
@@ -59,10 +53,8 @@ class SiteInfoDAO extends Database {
             $columns = [];
             $values = [];
 
-            $ignoredColumns = ["id", "ico", "logoImage", "coverImage", "defaultImage", "createdAt"];
-
             foreach ($siteInfo->toArray() as $key => $value) {
-                if (in_array($key, $ignoredColumns)) {
+                if(empty($value)) {
                     continue;
                 }
 

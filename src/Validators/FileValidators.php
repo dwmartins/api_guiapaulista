@@ -29,11 +29,11 @@ class FileValidators {
     }
 
     public static function validIcon($file) {
-        $allowedTypes = ['image/vnd.microsoft.icon', 'image/x-icon'];
+        $allowedTypes = ['image/vnd.microsoft.icon', 'image/x-icon', 'image/jpeg', 'image/jpg', 'image/png'];
         $maxFileSize = 5 * 1024 * 1024;
     
         if(!in_array($file['type'], $allowedTypes)) {
-            return ["invalid" => "O arquivo deve ser um ícone ICO."];
+            return ["invalid" => "O arquivo deve ser um ícone ICO ou JPG, JPEG ou PNG."];
         }
     
         if($file['size'] > $maxFileSize) {

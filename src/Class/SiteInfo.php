@@ -5,44 +5,33 @@ namespace App\Class;
 use App\Models\SiteInfoDAO;
 
 class SiteInfo {
-    private int $id;
-    private string $webSiteName;
-    private string $email;
-    private string $phone;
-    private string $city;
-    private string $state;
-    private string $address;
-    private string $workSchedule;
-    private string $instagram;
-    private string $facebook;
-    private string $description;
-    private string $keywords;
-    private string $ico;
-    private string $logoImage;
-    private string $coverImage;
-    private string $defaultImage;
-    private string $createdAt;
-    private string $updatedAt;
+    private int $id = 0;
+    private string $webSiteName = "";
+    private string $email = "";
+    private string $phone = "";
+    private string $city = "";
+    private string $state = "";
+    private string $address = "";
+    private string $workSchedule = "";
+    private string $instagram = "";
+    private string $facebook = "";
+    private string $description = "";
+    private string $keywords = "";
+    private string $ico = "";
+    private string $logoImage = "";
+    private string $coverImage = "";
+    private string $defaultImage = "";
+    private string $createdAt = "";
+    private string $updatedAt = "";
 
     public function __construct(array $siteInfo = null) {
-        $this->id           = $siteInfo['id'] ?? 0;
-        $this->webSiteName  = $siteInfo['webSiteName'] ?? '';
-        $this->email        = $siteInfo['email'] ?? '';
-        $this->phone        = $siteInfo['phone'] ?? '';
-        $this->city         = $siteInfo['city'] ?? '';
-        $this->state        = $siteInfo['state'] ?? '';
-        $this->address      = $siteInfo['address'] ?? '';
-        $this->workSchedule = $siteInfo['workSchedule'] ?? '';
-        $this->instagram    = $siteInfo['instagram'] ?? '';
-        $this->facebook     = $siteInfo['facebook'] ?? '';
-        $this->description  = $siteInfo['description'] ?? '';
-        $this->keywords     = $siteInfo['keywords'] ?? '';
-        $this->ico          = $siteInfo['ico'] ?? '';
-        $this->logoImage    = $siteInfo['logoImage'] ?? '';
-        $this->coverImage   = $siteInfo['coverImage'] ?? '';
-        $this->defaultImage = $siteInfo['defaultImage'] ?? '';
-        $this->createdAt    = $siteInfo['createdAt'] ?? '';
-        $this->updatedAt    = $siteInfo['updatedAt'] ?? '';
+        if (!empty($siteInfo)) {
+            foreach ($siteInfo as $key => $value) {
+                if (property_exists($this, $key)) {
+                    $this->$key = $value;
+                }
+            }
+        }
     }
 
     public function toArray(): array {
@@ -213,16 +202,14 @@ class SiteInfo {
     }
 
     public function save(): void {
-        $this->id = SiteInfoDAO::save($this);
+        if(empty($this->getId())) {
+            $this->id = SiteInfoDAO::save($this);
+        } else {
+            SiteInfoDAO::update($this);
+        }
     }
 
-    public function update(): int {
-        return SiteInfoDAO::update($this);
-    }
-
-    public function fetch(): array {
-        $siteInfo = SiteInfoDAO::fetch($this);
-
+    public function update($siteInfo): void {
         foreach ($siteInfo as $key => $value) {
             if(empty($value)) {
                 continue;
@@ -230,6 +217,22 @@ class SiteInfo {
 
             if (property_exists($this, $key)) {
                 $this->$key = $value;
+            }
+        }
+    }
+
+    public function fetch(): array {
+        $siteInfo = SiteInfoDAO::fetch($this);
+
+        if(!empty($siteInfo)) {
+            foreach ($siteInfo as $key => $value) {
+                if(empty($value)) {
+                    continue;
+                }
+    
+                if (property_exists($this, $key)) {
+                    $this->$key = $value;
+                }
             }
         }
 
