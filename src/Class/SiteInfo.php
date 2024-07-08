@@ -209,7 +209,7 @@ class SiteInfo {
         }
     }
 
-    public function update($siteInfo): void {
+    public function update(array $siteInfo): void {
         foreach ($siteInfo as $key => $value) {
             if(empty($value)) {
                 continue;

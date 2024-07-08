@@ -55,9 +55,8 @@ class SendEmail {
         $mail = new PHPMailer(true);
     
         $emailConfig = Request::getAttribute('emailConfig');
-        $emailConfig->fetch();
 
-        if($emailConfig->getActivated() === "N") {
+        if(!$emailConfig->getActivated()) {
             return;
         }
     

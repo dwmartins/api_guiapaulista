@@ -26,8 +26,8 @@ class UserMiddleware {
             ], 401);
         }
 
-        $user = UserDAO::fetchById($userId);
-        $user = new User($user);
+        $user = new User();
+        $user->fetchById($userId);
 
         if(!empty($user) && $user->getActive() === "Y") {
             $decoded = JWTManager::validate($token, $user);

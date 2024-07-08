@@ -5,32 +5,33 @@ namespace App\Class;
 use App\Models\UserDAO;
 
 class User {
-    private int $id;
-    private string $name;
-    private string $lastName;
-    private string $email;
-    private string $password;
-    private string $token;
-    private string $active;
-    private string $role;
-    private string $photo;
-    private int $createdBy;
-    private string $createdAt;
-    private string $updatedAt;
+    private int $id = 0;
+    private string $name = "";
+    private string $lastName = "";
+    private string $email = "";
+    private string $password = "";
+    private string $token = "";
+    private string $active = "N";
+    private string $role = "mod";
+    private string $photo = "";
+    private int $createdBy = 0;
+    private string $createdAt = "";
+    private string $updatedAt = "";
 
     public function __construct(array $user = null) {
-        $this->id        = $user['id'] ?? 0;
-        $this->name      = isset($user['name']) ? ucfirst($user['name']) : '';
-        $this->lastName  = isset($user['lastName']) ? ucfirst($user['lastName']) : '';
-        $this->email     = $user['email'] ?? '';
-        $this->password  = $user['password'] ?? '';
-        $this->token     = $user['token'] ?? '';
-        $this->active    = $user['active'] ?? 'N';
-        $this->role      = $user['role'] ?? 'mod';
-        $this->photo     = $user['photo'] ?? '';
-        $this->createdBy = $user['createdBy'] ?? 0;
-        $this->createdAt = $user['createdAt'] ?? '';
-        $this->updatedAt = $user['updatedAt'] ?? '';
+        if (!empty($user)) {
+            foreach ($user as $key => $value) {
+                if (property_exists($this, $key)) {
+
+                    if($key === "password") {
+                        $this->password = $this->isPasswordHashed($value) ? $value : password_hash($value, PASSWORD_DEFAULT);
+                        continue;
+                    }
+
+                    $this->$key = $value;
+                }
+            }
+        }
     }
 
     public function toArray(): array {
@@ -146,13 +147,34 @@ class User {
         $this->updatedAt = $updatedAt;
     }
 
-    public function save(): void {
-        $userId = UserDAO::save($this);
-        $this->setId($userId);
+    private function isPasswordHashed($password) {
+        $info = password_get_info($password);
+        return $info['algo'];
     }
 
-    public function update(): int {
-        return UserDAO::update($this);
+    public function update(array $user): void {
+        foreach ($user as $key => $value) {
+            if(empty($value)) {
+                continue;
+            }
+
+            if (property_exists($this, $key)) {
+                if($key === "password") {
+                    $this->password = $this->isPasswordHashed($value) ? $value : password_hash($value, PASSWORD_DEFAULT);
+                    continue;
+                }
+
+                $this->$key = $value;
+            }
+        }
+    }
+
+    public function save(): void {
+        if(empty($this->getId())) {
+            $this->id = UserDAO::save($this);
+        } else {
+            UserDAO::update($this);
+        }
     }
 
     public function updatePassword(): int {

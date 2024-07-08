@@ -5,22 +5,22 @@ namespace App\Class;
 use App\Models\UserRecoverPasswordDAO;
 
 class UserRecoverPassword {
-    private int $id;
-    private int $user_id;
-    private string $token;
-    private string $used;
-    private string $expiration;
-    private string $createdAt;
-    private string $updatedAt;
+    private int $id = 0;
+    private int $user_id = 0;
+    private string $token = "";
+    private string $used = "";
+    private string $expiration = "";
+    private string $createdAt = "";
+    private string $updatedAt = "";
 
     public function __construct(array $recover = null) {
-        $this->id = $recover['id'] ?? 0;
-        $this->user_id = $recover['user_id'] ?? 0;
-        $this->token = $recover['token'] ?? '';
-        $this->used = $recover['used'] ?? 'Y';
-        $this->expiration = $recover['expiration'] ?? '';
-        $this->createdAt = $recover['createdAt'] ?? '';
-        $this->updatedAt = $recover['updatedAt'] ?? '';
+        if (!empty($recover)) {
+            foreach ($recover as $key => $value) {
+                if (property_exists($this, $key)) {
+                    $this->$key = $value;
+                }
+            }
+        }
     }
 
     public function toArray(): array {
@@ -92,7 +92,11 @@ class UserRecoverPassword {
     }
 
     public function save(): int {
-        return UserRecoverPasswordDAO::save($this);
+        if(empty($this->getId())) {
+            return UserRecoverPasswordDAO::save($this);
+        } else {
+            return UserRecoverPasswordDAO::update($this);
+        }
     }
 
     public function fetchByTokenAndUser(): array {
@@ -108,9 +112,5 @@ class UserRecoverPassword {
             }
         }
         return $codeInfo;
-    }
-
-    public function update(): int {
-        return UserRecoverPasswordDAO::update($this);
     }
 }

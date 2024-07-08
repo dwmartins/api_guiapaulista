@@ -57,9 +57,13 @@ class UserDAO extends Database {
             $columns = [];
             $values = [];
 
-            $ignoredColumns = ["id", "photo", "password", "token", "role", "createdBy", "createdAt"];
+            $ignoredColumns = ["token"];
 
             foreach ($userArray as $key => $value) {
+                if(empty($value)) {
+                    continue;
+                }
+
                 if (in_array($key, $ignoredColumns)) {
                     continue;
                 }

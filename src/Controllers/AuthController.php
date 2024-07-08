@@ -21,11 +21,10 @@ class AuthController {
                 return;
             }
 
-            $userExists = UserDAO::fetchByEmail($data['email']);
+            $user = new User();
+            $user->fetchByEmail($data['email']);
 
-            if(!empty($userExists)) {
-                $user = new User($userExists);
-
+            if(!empty($user->getId())) {
                 if($user->getActive() === "Y") {
                     if(password_verify($data['password'], $user->getPassword())) {
                         $userData = array(

@@ -44,6 +44,7 @@ class UserController {
             }
 
             $emailConfig = new EmailConfig();
+            $emailConfig->fetch();
 
             if(!$emailConfig->configActive()) {
                 return $response->json([
@@ -54,11 +55,10 @@ class UserController {
 
             $request->setAttribute('emailConfig', $emailConfig);
 
-            $userExists = UserDAO::fetchByEmail($data['email']);
+            $user = new User();
+            $user->fetchByEmail($data['email']);
 
-            if(!empty($userExists)) {
-                $user = new User($userExists);
-
+            if(!empty($user->getId())) {
                 if($user->getActive() === "Y") {
                     $emailInfo = [
                         'to' => $user->getEmail(),
@@ -172,18 +172,17 @@ class UserController {
             ];
 
             $recoverPassword = new UserRecoverPassword($data);
-            $tokenExists = $recoverPassword->fetchByTokenAndUser();
 
-            if(!empty($tokenExists) && $recoverPassword->getExpiration() >= date('Y-m-d H:i:s')) {
+            if(!empty($recoverPassword->fetchByTokenAndUser()) && $recoverPassword->getExpiration() >= date('Y-m-d H:i:s')) {
                 $user = new User();
                 $user->fetchById($requestData['userId']);
     
                 if(!empty($user->getId()) && $user->getActive() === "Y") {
                     $user->setPassword($requestData['password']);
-                    $user->updatePassword();
+                    $user->save();
                     
                     $recoverPassword->setUsed("Y");
-                    $recoverPassword->update();
+                    $recoverPassword->save();
 
                     return $response->json([
                         'success'   => true,
@@ -229,7 +228,7 @@ class UserController {
                 UploadFile::uploadFile($photo, $this->userImagesFolder, $fileName);
                 
                 $user->setPhoto($fileName);
-                $user->updatePhoto();
+                $user->save();
 
                 return $response->json([
                     'success' => true,
@@ -255,7 +254,7 @@ class UserController {
                 return;
             }
 
-            if(UserDAO::fetchByEmail($body['email']) != false) {
+            if(!empty(UserDAO::fetchByEmail($body['email']))) {
                 return $response->json([
                     'error'     => true,
                     'message'   => "Este e-mail já está em uso."
@@ -264,6 +263,7 @@ class UserController {
 
             $user = new User($body);
             $user->setToken(JWTManager::newCrypto());
+            $user->setPassword($body['password']);
             $user->setCreatedBy($userRequest->getId());
             $user->save();
 
@@ -330,15 +330,17 @@ class UserController {
 
             $emailExists = UserDAO::fetchByEmail($body['email']);
 
-            if($emailExists != false && $emailExists['id'] != $body['id']) {
+            if($emailExists && $emailExists['id'] != $body['id']) {
                 return $response->json([
                     'error'     => true,
                     'message'   => "Este e-mail já está em uso."
                 ], 409);
             }
 
-            $user = new User($body);
-            $user->update();
+            $user = new User();
+            $user->fetchById($body['id']);
+            $user->update($body);
+            $user->save();
 
             return $response->json([
                 'success'   => true,
@@ -371,7 +373,7 @@ class UserController {
             $user->fetchById($requestData['userId']);
 
             $user->setRole($requestData['role']);
-            $user->updateRole();
+            $user->save();
 
             return $response->json([
                 'success'   => true,
@@ -389,14 +391,22 @@ class UserController {
 
     public function delete(Request $request, Response $response, $id) {
         try {
-            $user = UserDAO::fetchById($id[0]);
-            $user = new User($user);
-            $user->delete();
+            $user = new User();
+            $user->fetchById($id[0]);
+
+            if(!empty($user->getId())) {
+                $user->delete();
+
+                return $response->json([
+                    'success'   => true,
+                    'message'   => "Usuário deletado com sucesso."
+                ], 200);
+            }
 
             return $response->json([
-                'success'   => true,
-                'message'   => "Usuário deletado com sucesso."
-            ], 200);
+                'error'   => true,
+                'message'   => "Usuário não encontrado."
+            ], 404);
 
         } catch (Exception $e) {
             logError($e->getMessage());

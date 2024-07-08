@@ -142,9 +142,15 @@ class EmailConfig {
     public function fetch(): array {
         $emailConfig = EmailConfigDAO::fetch();
 
-        foreach ($emailConfig as $key => $value) {
-            if (property_exists($this, $key)) {
-                $this->$key = $value;
+        if(!empty($emailConfig)) {
+            foreach ($emailConfig as $key => $value) {
+                if(empty($value)) {
+                    continue;
+                }
+    
+                if (property_exists($this, $key)) {
+                    $this->$key = $value;
+                }
             }
         }
 
@@ -156,7 +162,6 @@ class EmailConfig {
     }
 
     public function configActive(): bool {
-        $this->fetch();
         return $this->getActivated() === "Y" ? true : false;
     }
 }
