@@ -48,6 +48,10 @@ class UserPermissionsDAO extends Database{
         }
     }
 
+    public static function update(UserPermissions $permission) {
+
+    }
+
     public static function getPermissions(User $user): array {
         try {
             $pdo = self::getConnection();

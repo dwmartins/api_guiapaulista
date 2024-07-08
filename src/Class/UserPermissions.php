@@ -5,24 +5,24 @@ namespace App\Class;
 use App\Models\UserPermissionsDAO;
 
 class UserPermissions {
-    private int $id;
-    private int $user_id;
-    private string $users;
-    private string $content;
-    private string $siteInfo;
-    private string $emailSending;
-    private string $createdAt;
-    private string $updatedAt;
+    private int $id = 0;
+    private int $user_id = 0;
+    private string $users = "";
+    private string $content = "";
+    private string $siteInfo = "";
+    private string $emailSending = "";
+    private string $createdAt = "";
+    private string $updatedAt = "";
 
     public function __construct(array $permission = null) {
         $this->id           = $permission['id'] ?? 0;
         $this->user_id      = $permission['user_id'] ?? 0;
-        $this->users        = isset($permission['users']) ? (!is_string($permission['users']) ? json_encode($permission['users']) : $permission['users']) : '';
-        $this->content      = isset($permission['content']) ? (!is_string($permission['content']) ? json_encode($permission['content']) : $permission['content']) : '';
-        $this->siteInfo     = isset($permission['siteInfo']) ? (!is_string($permission['siteInfo']) ? json_encode($permission['siteInfo']) : $permission['siteInfo']) : '';
-        $this->emailSending = isset($permission['emailSending']) ? (!is_string($permission['emailSending']) ? json_encode($permission['emailSending']) : $permission['emailSending']) : '';
         $this->createdAt    = $permission['createdAt'] ?? '';
         $this->updatedAt    = $permission['updatedAt'] ?? '';
+
+        if (!empty($permission)) {
+            $this->setPermissions($permission);
+        }
     }
 
     public function toArray(): array {
@@ -36,6 +36,24 @@ class UserPermissions {
             'createdAt'      => $this->createdAt,
             'updatedAt'      => $this->updatedAt
         ];
+    }
+
+    public function setPermissions(array $permission) {
+        if (isset($permission['users'])) {
+            $this->users = is_string($permission['users']) ? $permission['users'] : json_encode($permission['users']);
+        }
+
+        if (isset($permission['content'])) {
+            $this->content = is_string($permission['content']) ? $permission['content'] : json_encode($permission['content']);
+        }
+
+        if (isset($permission['siteInfo'])) {
+            $this->siteInfo = is_string($permission['siteInfo']) ? $permission['siteInfo'] : json_encode($permission['siteInfo']);
+        }
+
+        if (isset($permission['emailSending'])) {
+            $this->emailSending = is_string($permission['emailSending']) ? $permission['emailSending'] : json_encode($permission['emailSending']);
+        }
     }
 
     public function getId(): int {
@@ -99,7 +117,11 @@ class UserPermissions {
     }
 
     public function save() {
-        UserPermissionsDAO::save($this);
+        if(empty($this->getId())) {
+            UserPermissionsDAO::update($this);
+        } else {
+            UserPermissionsDAO::save($this);
+        }
     }
 
     public function getPermissions(User $user) {
