@@ -5,32 +5,29 @@ namespace App\Class;
 use App\Models\EmailConfigDAO;
 
 class EmailConfig {
-    private int $id;
-    private string $server;
-    private string $emailAddress;
-    private string $username;
-    private string $password;
-    private int $port;
-    private string $authentication;
-    private string $activated;
-    private string $createdAt;
-    private string $updatedAt;
+    private int $id = 0;
+    private string $server = "";
+    private string $emailAddress = "";
+    private string $username = "";
+    private string $password = "";
+    private int $port = 465;
+    private string $authentication = "SSL";
+    private string $activated = "N";
+    private string $createdAt = "";
+    private string $updatedAt = "";
 
     public function __construct(array $emailConfig = null) {
-        $this->id             = $emailConfig['id'] ?? 0;
-        $this->server         = $emailConfig['server'] ?? '';
-        $this->emailAddress   = $emailConfig['emailAddress'] ?? '';
-        $this->username       = $emailConfig['username'] ?? '';
-        $this->port           = $emailConfig['port'] ?? 465;
-        $this->authentication = $emailConfig['authentication'] ?? 'SSL';
-        $this->activated      = $emailConfig['activated'] ?? 'N';
-        $this->createdAt      = $emailConfig['createdAt'] ?? '';
-        $this->updatedAt      = $emailConfig['updatedAt'] ?? '';
+        if (!empty($emailConfig)) {
+            foreach ($emailConfig as $key => $value) {
+                if($emailConfig['password'] && !empty($emailConfig['password'])) {
+                    $this->setPassword($emailConfig['password']);
+                    continue;
+                }
 
-        if (isset($emailConfig['password'])) {
-            $this->setPassword($emailConfig['password']);
-        } else {
-            $this->password = '';
+                if (property_exists($this, $key)) {
+                    $this->$key = $value;
+                }
+            }
         }
     }
 
@@ -84,13 +81,13 @@ class EmailConfig {
     public function getPassword(): string {
         $cipher = "aes-256-cbc";
         list($encrypted_data, $iv) = explode('::', base64_decode($this->password), 2);
-        return openssl_decrypt($encrypted_data, $cipher, $_ENV['ENCRYPTION_KEY'], 0, $iv);
+        return openssl_decrypt($encrypted_data, $cipher, $_ENV['ENCRYPTION_KEY_FOR_EMAIL_CONF'], 0, $iv);
     }
 
     public function setPassword(string $password): void {
         $cipher = "aes-256-cbc";
         $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length($cipher));
-        $encrypted = openssl_encrypt($password, $cipher, $_ENV['ENCRYPTION_KEY'], 0, $iv);
+        $encrypted = openssl_encrypt($password, $cipher, $_ENV['ENCRYPTION_KEY_FOR_EMAIL_CONF'], 0, $iv);
 
         $this->password = base64_encode($encrypted . '::' . $iv);
     }
@@ -135,8 +132,25 @@ class EmailConfig {
         $this->updatedAt = $updatedAt;
     }
 
+    public function update(array $emailConfig): void {
+        foreach ($emailConfig as $key => $value) {
+            if($key === "password" && !empty($emailConfig['password'])) {
+                $this->setPassword($emailConfig['password']);
+                continue;
+            }
+
+            if (property_exists($this, $key)) {
+                $this->$key = $value;
+            }
+        }
+    }
+
     public function save(): int {
-        return EmailConfigDAO::save($this);
+        if(empty($this->getId())) {
+            return EmailConfigDAO::save($this);
+        } else {
+            return EmailConfigDAO::update($this);
+        }
     }
 
     public function fetch(): array {
@@ -155,10 +169,6 @@ class EmailConfig {
         }
 
         return $emailConfig;
-    }
-
-    public function update(): int {
-        return EmailConfigDAO::update($this);
     }
 
     public function configActive(): bool {

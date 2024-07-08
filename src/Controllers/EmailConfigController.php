@@ -18,14 +18,14 @@ class EmailConfigController {
                 return false;
             }
 
-            $configExists = EmailConfigDAO::fetch();
             $emailConfig = new EmailConfig($data);
+            $emailConfig->fetch();
 
-            if(!empty($configExists)) {
-                $emailConfig->update();
-            } else {
-                $emailConfig->save();
+            if(!empty($emailConfig->getId())) {
+                $emailConfig->update($data);
             }
+
+            $emailConfig->save();
             
             $response->json([
                 'success' => true,
