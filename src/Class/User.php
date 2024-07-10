@@ -22,7 +22,10 @@ class User {
         if (!empty($user)) {
             foreach ($user as $key => $value) {
                 if (property_exists($this, $key)) {
-
+                    if(empty($value)) {
+                        continue;
+                    }
+                    
                     if($key === "password") {
                         $this->password = $this->isPasswordHashed($value) ? $value : password_hash($value, PASSWORD_DEFAULT);
                         continue;

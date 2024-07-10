@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Class\User;
 use App\Class\UserAccess;
+use App\Class\UserPermissions;
 use App\Http\JWTManager;
 use App\Http\Request;
 use App\Http\Response;
@@ -38,6 +39,16 @@ class AuthController {
                             "createdAt" => $user->getCreatedAt(),
                             "updatedAt" => $user->getUpdatedAt()
                         );
+
+                        $userPermissions = new UserPermissions();
+                        $userPermissions->getPermissions($user);
+
+                        $userData['permissions'] = [
+                            "users"        => $userPermissions->getUsers(),
+                            "content"      => $userPermissions->getContent(),
+                            "siteInfo"     => $userPermissions->getSiteInfo(),
+                            "emailSending" => $userPermissions->getEmailSending()
+                        ];
 
                         $userAccess = new UserAccess([
                             'user_id' => $user->getId(),

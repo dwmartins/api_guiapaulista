@@ -118,9 +118,9 @@ class UserPermissions {
 
     public function save() {
         if(empty($this->getId())) {
-            UserPermissionsDAO::update($this);
-        } else {
             UserPermissionsDAO::save($this);
+        } else {
+            UserPermissionsDAO::update($this);
         }
     }
 
