@@ -22,6 +22,7 @@ class Migration_20240624212558_table_site_info extends Database{
                 webSiteName VARCHAR(250),
                 email VARCHAR(100),
                 phone VARCHAR(100),
+                phoneIsWhatsApp ENUM('Y', 'N'),
                 city VARCHAR(100),
                 state VARCHAR(100),
                 address VARCHAR(250),

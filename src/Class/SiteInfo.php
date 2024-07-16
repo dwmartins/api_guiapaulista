@@ -9,6 +9,7 @@ class SiteInfo {
     private string $webSiteName = "";
     private string $email = "";
     private string $phone = "";
+    private string $phoneIsWhatsApp = "";
     private string $city = "";
     private string $state = "";
     private string $address = "";
@@ -36,24 +37,25 @@ class SiteInfo {
 
     public function toArray(): array {
         return [
-            'id'           => $this->id,
-            'webSiteName'  => $this->webSiteName,
-            'email'        => $this->email,
-            'phone'        => $this->phone,
-            'city'         => $this->city,
-            'state'        => $this->state,
-            'address'      => $this->address,
-            'workSchedule' => $this->workSchedule,
-            'instagram'    => $this->instagram,
-            'facebook'     => $this->facebook,
-            'description'  => $this->description,
-            'keywords'     => $this->keywords,
-            'ico'          => $this->ico,
-            'logoImage'    => $this->logoImage,
-            'coverImage'   => $this->coverImage,
-            'defaultImage' => $this->defaultImage,
-            'createdAt'    => $this->createdAt,
-            'updatedAt'    => $this->updatedAt,
+            'id'              => $this->id,
+            'webSiteName'     => $this->webSiteName,
+            'email'           => $this->email,
+            'phone'           => $this->phone,
+            'phoneIsWhatsApp' => $this->phoneIsWhatsApp,
+            'city'            => $this->city,
+            'state'           => $this->state,
+            'address'         => $this->address,
+            'workSchedule'    => $this->workSchedule,
+            'instagram'       => $this->instagram,
+            'facebook'        => $this->facebook,
+            'description'     => $this->description,
+            'keywords'        => $this->keywords,
+            'ico'             => $this->ico,
+            'logoImage'       => $this->logoImage,
+            'coverImage'      => $this->coverImage,
+            'defaultImage'    => $this->defaultImage,
+            'createdAt'       => $this->createdAt,
+            'updatedAt'       => $this->updatedAt,
         ];
     }
 
@@ -87,6 +89,14 @@ class SiteInfo {
 
     public function setPhone(string $phone): void {
         $this->phone = $phone;
+    }
+
+    public function getPhoneIsWhatsApp(): string {
+        return $this->phoneIsWhatsApp;
+    }
+
+    public function setPhoneIsWhatsApp(string $isWhatsApp): void {
+        $this->phoneIsWhatsApp = $isWhatsApp;
     }
 
     public function getCity(): string {
