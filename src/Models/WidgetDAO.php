@@ -46,7 +46,7 @@ class WidgetDAO extends Database{
         }
     }
 
-    public function update(Widget $widget): int {
+    public static function update(Widget $widget): int {
         try {
             $pdo = self::getConnection();
             $widget->setUpdatedAt(date('Y-m-d H:i:s'));
@@ -92,7 +92,7 @@ class WidgetDAO extends Database{
             );
 
             $stmt->execute();
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             return $result ?: [];
 

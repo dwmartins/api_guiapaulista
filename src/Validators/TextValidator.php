@@ -23,6 +23,10 @@ class TextValidator {
         return true;
     }
 
+    public static function isNumeric(int $field): bool {
+        return ctype_digit($field);
+    }
+
     public static function email(string $email) {
         if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return false;

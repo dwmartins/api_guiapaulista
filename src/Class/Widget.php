@@ -48,7 +48,7 @@ class Widget {
     }
 
     public function setWidgetName(string $widget_name) {
-        $this->$widget_name = $widget_name;
+        $this->widget_name = $widget_name;
     }
 
     public function getData(): array {
@@ -56,7 +56,7 @@ class Widget {
     }
 
     public function setData(array $widget_data): void {
-        $this->$widget_data = json_encode($widget_data);
+        $this->widget_data = json_encode($widget_data);
     }
 
     public function getCreatedAt(): string {
@@ -83,6 +83,10 @@ class Widget {
         }
     }
 
+    public function update(array $widget): void {
+        $this->widget_data = json_encode($widget['widget_data']);
+    }
+
     public function getWidgetById(string $widgetName) {
         $widget = WidgetDAO::fetchById($widgetName);
 
@@ -99,6 +103,6 @@ class Widget {
     }
 
     public function getWidgets() {
-        return WidgetDAO::fetchAll($this);
+        return WidgetDAO::fetchAll();
     }
 }
