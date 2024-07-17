@@ -2,7 +2,7 @@
 
 use App\Models\Database;
 
-class Migration_20240701220406_recover_password extends Database{
+class Migration_20240716195051_table_widgets extends Database{
     protected $db;
 
     public function __construct() {
@@ -17,15 +17,12 @@ class Migration_20240701220406_recover_password extends Database{
     public function up() {
         // Migration implementation (up)
         try {
-            $sql = "CREATE TABLE IF NOT EXISTS user_recover_password (
+            $sql = "CREATE TABLE IF NOT EXISTS widgets (
                 id INT AUTO_INCREMENT PRIMARY KEY,
-                user_id INT NOT NULL,
-                token TEXT NOT NULL,
-                used ENUM('Y', 'N'),
-                expiration DATETIME,
+                widget_name VARCHAR(100),
+                widget_data JSON,
                 createdAt DATETIME,
-                updatedAt DATETIME,
-                CONSTRAINT fk_userRecoverPasswordId FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+                updatedAt DATETIME
             );";
 
             $stmt = $this->db->prepare($sql);

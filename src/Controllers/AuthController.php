@@ -43,18 +43,20 @@ class AuthController {
                         $userPermissions = new UserPermissions();
                         $userPermissions->getPermissions($user);
 
-                        $userData['permissions'] = [
-                            "users"        => $userPermissions->getUsers(),
-                            "content"      => $userPermissions->getContent(),
-                            "siteInfo"     => $userPermissions->getSiteInfo(),
-                            "emailSending" => $userPermissions->getEmailSending()
-                        ];
-
-                        $userAccess = new UserAccess([
-                            'user_id' => $user->getId(),
-                            'ip'      => $request->getIp()
-                        ]);
-                        $userAccess->save();
+                        if($user->getRole() !== "super") {
+                            $userData['permissions'] = [
+                                "users"        => $userPermissions->getUsers(),
+                                "content"      => $userPermissions->getContent(),
+                                "siteInfo"     => $userPermissions->getSiteInfo(),
+                                "emailSending" => $userPermissions->getEmailSending()
+                            ];
+    
+                            $userAccess = new UserAccess([
+                                'user_id' => $user->getId(),
+                                'ip'      => $request->getIp()
+                            ]);
+                            $userAccess->save();
+                        }
 
                         return $response->json($userData, 200);
                     }

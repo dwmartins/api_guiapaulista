@@ -33,12 +33,12 @@ class MigrationManager extends Database{
 
             foreach ($pendingMigrations as $migrationFile) {
                 require_once __DIR__ . '/../../migrations/' . $migrationFile;
+                showLog("Running migration to $migrationFile", true);
                 $className = pathinfo($migrationFile, PATHINFO_FILENAME);
                 $migration = new $className();
                 $migration->up();
 
                 $this->markMigrationApplied($migrationFile);
-                showLog("Running migration to $migrationFile", true);
             }
 
             showSuccessLog("Migrations have been executed successfully.");
