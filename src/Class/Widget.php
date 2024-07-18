@@ -52,7 +52,7 @@ class Widget {
     }
 
     public function getData(): array {
-        return json_decode($this->widget_data);
+        return json_decode($this->widget_data, true);
     }
 
     public function setData(array $widget_data): void {
@@ -91,8 +91,9 @@ class Widget {
         $widget = WidgetDAO::fetchById($widgetName);
 
         if(!empty($widget)) {
+            $this->id = $widget['id'];
             $this->widget_name = $widget['widget_name'];
-            $this->widget_data = json_decode($widget['widget_data']);
+            $this->widget_data = $widget['widget_data'];
             $this->createdAt = $widget['createdAt'];
             $this->updatedAt = $widget['updatedAt'];
 

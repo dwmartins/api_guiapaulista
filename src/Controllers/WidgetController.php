@@ -12,9 +12,9 @@ class WidgetController {
         try {
             $requestData = $request->body();
 
-            if(!empty($requestData['phone'])) {
-                if(!ctype_digit($requestData['phone'])) {
-                    $response->json([
+            if(!empty($requestData['widget_data']['phone'])) {
+                if(!ctype_digit($requestData['widget_data']['phone'])) {
+                    return $response->json([
                         'error' => true,
                         'message' => "O campo (Telefone) contem caracteres inválidos."
                     ]);
@@ -28,8 +28,8 @@ class WidgetController {
             $fieldsToUpdate = ['active', 'useBasicInformationPhone', 'position', 'phone'];
 
             foreach ($fieldsToUpdate as $field) {
-                if (isset($requestData[$field])) {
-                    $data[$field] = $requestData[$field];
+                if (isset($requestData['widget_data'][$field])) {
+                    $data[$field] = $requestData['widget_data'][$field];
                 }
             }
 
