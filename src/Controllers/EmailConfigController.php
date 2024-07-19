@@ -41,12 +41,41 @@ class EmailConfigController {
         }
     }
 
+    public function updateStatus(Request $request, Response $response) {
+        $data = $request->body();
+        $active = $data['activated'] ? "Y" : "N";
+        $msgStatus = $data['activated'] ? "ativada" : "desativada";
+
+        try {
+            $emailConfig = new EmailConfig($data);
+            $emailConfig->fetch();
+            $emailConfig->setActivated($active);
+
+            $emailConfig->save();
+
+
+            $response->json([
+                'success' => true,
+                'message' => "Configurações de e-mail $msgStatus com sucesso."
+            ], 201);
+        } catch (Exception $e) {
+            logError($e->getMessage());
+            return $response->json([
+                'error'   => true,
+                'message' => "Falha ao $msgStatus as configurações de e-mail."
+            ], 500);
+        }
+    }
+
     public function fetch(Request $request, Response $response) {
         try {
             $emailConfig = new EmailConfig();
             $result = $emailConfig->fetch();
-            
-            unset($result['password']);
+
+            if(!empty($result)) {
+                unset($result['password']);
+                $result['activated'] = $result['activated'] === "Y" ? true : false;
+            }
 
             $response->json($result);
 

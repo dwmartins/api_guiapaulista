@@ -19,12 +19,14 @@ class EmailConfig {
     public function __construct(array $emailConfig = null) {
         if (!empty($emailConfig)) {
             foreach ($emailConfig as $key => $value) {
-                if($emailConfig['password'] && !empty($emailConfig['password'])) {
-                    $this->setPassword($emailConfig['password']);
-                    continue;
-                }
-
                 if (property_exists($this, $key)) {
+                    if($key === "password") {
+                        if($emailConfig['password'] && !empty($emailConfig['password'])) {
+                            $this->setPassword($emailConfig['password']);
+                            continue;
+                        }
+                    }
+                    
                     $this->$key = $value;
                 }
             }
