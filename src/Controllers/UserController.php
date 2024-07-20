@@ -28,8 +28,12 @@ class UserController {
                 foreach ($users as $key => $user) {
                     $permission = new UserPermissions();
                     $permission->getPermissions(new User($user));
-                    $users[$key]['permissions'] = $permission->toArray();
-
+                    $users[$key]['permissions'] =  [
+                        "users"        => $permission->getUsers(),
+                        "content"      => $permission->getContent(),
+                        "siteInfo"     => $permission->getSiteInfo(),
+                        "emailSending" => $permission->getEmailSending()
+                    ];
                     unset($users[$key]['permissions']['id']);
                     unset($users[$key]['permissions']['user_id']);
                 }
@@ -282,7 +286,8 @@ class UserController {
 
             $response->json([
                 'success' => true,
-                'message' => "Usuário criado com sucesso."
+                'message' => "Usuário criado com sucesso.",
+                'userData' => $user->fetchById($user->getId())
             ], 201);
 
         } catch (Exception $e) {

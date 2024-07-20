@@ -198,7 +198,7 @@ class UserDAO extends Database {
             $userArray = $user->toArray();
 
             $conditions[] = "u.role != ?";
-            $parameters[] = 'super';
+            $parameters[] = 'support';
 
             $columns = [];
             $ignoredColumns = ["token", "password"];
@@ -222,7 +222,7 @@ class UserDAO extends Database {
             }
 
             if (!empty($filters['role'])) {
-                if ($filters['role'] !== 'super') {
+                if ($filters['role'] !== 'support') {
                     $conditions[] = "u.role = ?";
                     $parameters[] = $filters['role'];
                 }

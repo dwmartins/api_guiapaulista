@@ -46,7 +46,7 @@ class Migration_20240624212427_table_users extends Database{
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
 
-            //Cria um usuário super
+            //Cria um usuário support
             $sql = $sql = "INSERT INTO users (name, email, password, token, active, role, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
             $stmt = $this->db->prepare($sql);
 
@@ -56,7 +56,7 @@ class Migration_20240624212427_table_users extends Database{
                 password_hash("aguip2707", PASSWORD_DEFAULT),
                 JWTManager::newCrypto(),
                 "Y",
-                "super",
+                "support",
                 date('Y-m-d H:i:s'),
                 date('Y-m-d H:i:s')
             ];

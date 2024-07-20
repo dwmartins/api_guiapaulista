@@ -14,7 +14,7 @@ use Exception;
 class UserMiddleware {
     public static function isAuth(Request $request, Response $response) {
         try {
-            $allowedRoles = ["admin", "super"];
+            $allowedRoles = ["admin", "super", "support"];
             $headers = $request->authorization();
 
             $token  = $headers['token'] ?? '';
@@ -78,7 +78,7 @@ class UserMiddleware {
         try {
             $user = $request->getAttribute('userRequest');
 
-            if($user->getRole() === 'super') {
+            if($user->getRole() === 'super' || $user->getRole() === 'support') {
                 return true;
             }
 
@@ -117,7 +117,7 @@ class UserMiddleware {
         try {
             $user = $request->getAttribute('userRequest');
 
-            if($user->getRole() === 'super') {
+            if($user->getRole() === 'super' || $user->getRole() === 'support') {
                 return true;
             }
 
@@ -150,7 +150,7 @@ class UserMiddleware {
         try {
             $user = $request->getAttribute('userRequest');
 
-            if($user->getRole() === 'super') {
+            if($user->getRole() === 'super' || $user->getRole() === 'support') {
                 return true;
             }
 

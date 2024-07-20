@@ -43,7 +43,7 @@ class AuthController {
                         $userPermissions = new UserPermissions();
                         $userPermissions->getPermissions($user);
 
-                        if($user->getRole() !== "super") {
+                        if($user->getRole() == "admin") {
                             $userData['permissions'] = [
                                 "users"        => $userPermissions->getUsers(),
                                 "content"      => $userPermissions->getContent(),
