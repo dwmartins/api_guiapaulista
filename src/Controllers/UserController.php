@@ -24,6 +24,17 @@ class UserController {
 
             $users = UserDAO::fetchAll($filters);
 
+            if(!empty($users)) {
+                foreach ($users as $key => $user) {
+                    $permission = new UserPermissions();
+                    $permission->getPermissions(new User($user));
+                    $users[$key]['permissions'] = $permission->toArray();
+
+                    unset($users[$key]['permissions']['id']);
+                    unset($users[$key]['permissions']['user_id']);
+                }
+            }
+
             return $response->json($users);
 
         } catch (Exception $e) {
