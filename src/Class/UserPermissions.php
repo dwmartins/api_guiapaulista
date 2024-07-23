@@ -116,6 +116,12 @@ class UserPermissions {
         $this->updatedAt = $updatedAt;
     }
 
+    public function update(array $permissions) {
+        if (!empty($permissions)) {
+            $this->setPermissions($permissions);
+        }
+    }
+
     public function save() {
         if(empty($this->getId())) {
             UserPermissionsDAO::save($this);

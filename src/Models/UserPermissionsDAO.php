@@ -49,7 +49,41 @@ class UserPermissionsDAO extends Database{
     }
 
     public static function update(UserPermissions $permission) {
+        try {
+            $pdo = self::getConnection();
 
+            $permission->setUpdatedAt(date('Y-m-d H:i:s'));
+            $permissionArray = $permission->toArray();
+
+            $columns = [];
+            $values = [];
+
+            foreach ($permissionArray as $key => $value) {
+                if(empty($value)) {
+                    continue;
+                }
+
+                $columns[] = "$key = ?";
+                $values[] = $value;
+            }
+
+            $columns = implode(", ", $columns);
+            $values[] = $permission->getId();
+
+            $stmt = $pdo->prepare(
+                "UPDATE user_permissions 
+                SET $columns
+                WHERE id = ?"
+            );
+
+            $stmt->execute($values);
+
+            return $stmt->rowCount();
+
+        } catch (PDOException $e) {
+            logError($e->getMessage());
+            throw new Exception("Error when executing query to update user permissions");
+        }
     }
 
     public static function getPermissions(User $user): array {

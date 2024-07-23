@@ -286,6 +286,7 @@ class UserController {
 
             $userCreated = $user->fetchById($user->getId());
             $userCreated['permissions'] = $body['permissions'];
+            unset($userCreated['password']);
 
             $response->json([
                 'success' => true,
@@ -349,6 +350,11 @@ class UserController {
         }
         
         $permissions = new UserPermissions($userPermissions);
+
+        if(!empty($permissions->getPermissions($user))) {
+            $permissions->update($userPermissions);
+        }
+
         $permissions->save();
     }
 
@@ -373,6 +379,8 @@ class UserController {
             $user->fetchById($body['id']);
             $user->update($body);
             $user->save();
+
+            $this->setPermissions($user, $body['permissions']);
 
             return $response->json([
                 'success'   => true,
