@@ -4,7 +4,8 @@ use App\Http\Route;
 use App\Middleware\UserMiddleware;
 
 Route::get('/user', 'UserController@fetch', [
-    [UserMiddleware::class, 'isAuth']
+    [UserMiddleware::class, 'isAuth'],
+    [UserMiddleware::class, 'permissionsToUsers']
 ]);
 
 Route::post('/user', 'UserController@create', [
@@ -13,11 +14,18 @@ Route::post('/user', 'UserController@create', [
 ]);
 
 Route::put('/user', 'UserController@update', [
-    [UserMiddleware::class, 'isAuth']
+    [UserMiddleware::class, 'isAuth'],
+    [UserMiddleware::class, 'permissionsToUsers']
 ]);
 
 Route::delete('/user/{id}', 'UserController@delete', [
-    [UserMiddleware::class, 'isAuth']
+    [UserMiddleware::class, 'isAuth'],
+    [UserMiddleware::class, 'permissionsToUsers']
+]);
+
+Route::post('/user/delete-multiples', 'UserController@deleteMultiples', [
+    [UserMiddleware::class, 'isAuth'],
+    [UserMiddleware::class, 'permissionsToUsers']
 ]);
 
 Route::post('/user/update-photo', 'UserController@updatePhoto', [

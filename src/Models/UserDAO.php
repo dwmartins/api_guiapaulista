@@ -187,7 +187,26 @@ class UserDAO extends Database {
 
         } catch (PDOException $e) {
             logError($e->getMessage());
-            throw new Exception("Error when running query to search for users");
+            throw new Exception("Error when executing query to delete user");
+        }
+    }
+
+    public static function deleteMultiples($ids): int {
+        try {
+            $pdo = self::getConnection();
+            $in = str_repeat('?,', count($ids) - 1) . '?';
+
+            $stmt = $pdo->prepare(
+                "DELETE FROM users
+                WHERE id IN ($in)"
+            );
+
+            $stmt->execute($ids);
+            return $stmt->rowCount();
+
+        } catch (PDOException $e) {
+            logError($e->getMessage());
+            throw new Exception("Error when executing query to exclude multiple users");
         }
     }
 

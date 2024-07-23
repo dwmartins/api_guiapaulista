@@ -432,4 +432,25 @@ class UserController {
             ], 500);
         }
     }
+
+    public function deleteMultiples(Request $request, Response $response) {
+        try {
+            $requestData = $request->body();
+            $ids = $requestData['ids'];
+
+            UserDAO::deleteMultiples($ids);
+
+            return $response->json([
+                'success'   => true,
+                'message'   => "Usuários deletados com sucesso."
+            ], 200);
+
+        } catch (Exception $e) {
+            logError($e->getMessage());
+            return $response->json([
+                'error'   => true,
+                'message' => "Falha ao deletar oo usuários."
+            ], 500);
+        }
+    }
 }
