@@ -282,12 +282,15 @@ class UserController {
             $user->setCreatedBy($userRequest->getId());
             $user->save();
 
-            $this->setPermissions($user);
+            $this->setPermissions($user, $body['permissions']);
+
+            $userCreated = $user->fetchById($user->getId());
+            $userCreated['permissions'] = $body['permissions'];
 
             $response->json([
                 'success' => true,
                 'message' => "Usuário criado com sucesso.",
-                'userData' => $user->fetchById($user->getId())
+                'userData' => $userCreated
             ], 201);
 
         } catch (Exception $e) {
@@ -299,39 +302,52 @@ class UserController {
         }
     }
 
-    public function setPermissions(User $user) {
-        // Permissões para ações de usuários;  
-        $users = [
-            'permission' => false,
-            'label' => 'Usuários'
-        ];
+    public function setPermissions(User $user, array $permissions) {
+        $userPermissions = [];
 
-        // Permissões para conteúdos do site;
-        $content = [
-            'permission' => false,
-            'label' => 'Conteúdos do site.'
-        ];
+        if(!empty($permissions)) {
+            $userPermissions = [
+                "user_id" => $user->getId(),
+                "users" => $permissions['users'],
+                "content" => $permissions['content'],
+                "siteInfo" => $permissions['siteInfo'],
+                'emailSending' => $permissions['emailSending']
+            ];
 
-        //Permissões para ações de configurações;
-        $siteInfo = [
-            'permission' => true,
-            'label' => 'Informações do site'
-        ];
+        } else {
+            // Permissões para ações de usuários;  
+            $users = [
+                'permission' => false,
+                'label' => 'Usuários'
+            ];
 
-        //Permissões para configurações de e-mail;
-        $emailSending = [
-            'permission' => false,
-            'label' => 'Configurações de e-mail'
-        ];
+            // Permissões para conteúdos do site;
+            $content = [
+                'permission' => false,
+                'label' => 'Conteúdos do site.'
+            ];
 
-        $userPermissions = [
-            "user_id" => $user->getId(),
-            "users" => $users,
-            "content" => $content,
-            "siteInfo" => $siteInfo,
-            'emailSending' => $emailSending
-        ];
+            //Permissões para ações de configurações;
+            $siteInfo = [
+                'permission' => true,
+                'label' => 'Informações do site'
+            ];
 
+            //Permissões para configurações de e-mail;
+            $emailSending = [
+                'permission' => false,
+                'label' => 'Configurações de e-mail'
+            ];
+
+            $userPermissions = [
+                "user_id" => $user->getId(),
+                "users" => $users,
+                "content" => $content,
+                "siteInfo" => $siteInfo,
+                'emailSending' => $emailSending
+            ];
+        }
+        
         $permissions = new UserPermissions($userPermissions);
         $permissions->save();
     }
