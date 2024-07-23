@@ -378,6 +378,11 @@ class UserController {
             $user = new User();
             $user->fetchById($body['id']);
             $user->update($body);
+            
+            if(!empty($body['newPassword'])) {
+                $user->setPassword($body['newPassword']);
+            }
+
             $user->save();
 
             $this->setPermissions($user, $body['permissions']);
